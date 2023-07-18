@@ -70,6 +70,7 @@ p, a, ul, li, ol, button, form, textarea, input {
     padding:40px 20px;
     background:var(--base-0);
     height:100%;
+    padding-top:200px;
 }
 
 /*Nav*/
@@ -126,5 +127,8 @@ nav svg {
 }
 .nav-menu svg {
 	fill:var(--base-0);
+  cursor:pointer;
+}
+.nav-cart {
   cursor:pointer;
 }
