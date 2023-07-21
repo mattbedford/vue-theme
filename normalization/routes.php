@@ -21,8 +21,8 @@ add_action('rest_api_init', function () {
 // Return previews of the array of items in the cart when hitting cart/checkout page - site_url()/wp-json/core-vue/cart
 add_action('rest_api_init', function () {
     register_rest_route( 'core-vue', '/cart',array(
-        'methods'  => 'GET',
-        'callback' => 'return_reports_data',
+        'methods'  => 'POST',
+        'callback' => 'return_cart_items',
         'permission_callback' => function() {
             return true;
         }
@@ -80,7 +80,7 @@ function return_single_report( $request ) {
     $slug = (string) $request['slug'];
     $post_obj = get_page_by_path($slug, OBJECT, 'report');
 
-    if(false === get_post_status($post_obj->ID) || null === $post_obj) {
+    if('publish' !== get_post_status($post_obj->ID) || null === $post_obj) {
         return array("error", "No report with that ID exists");
     }
 
@@ -100,4 +100,27 @@ function return_single_report( $request ) {
 
     return $single_report;
 
+}
+
+
+function return_cart_items($raw_data) {
+    $data = $raw_data->get_json_params();
+
+    $reports_array = $data['cartItems'];    
+    $return_array = array();
+
+    foreach($reports_array as $item) {
+        $item = intval($item);
+
+        if('publish' !== get_post_status($item)) continue;
+
+        $return_array[] = array(
+            'id' => $item,
+            'title' => get_the_title($item),
+            'cover_image' => get_field('cover_image', $item),
+            'price' => get_field('price', $item)
+        );
+    }
+
+    return $return_array;
 }
