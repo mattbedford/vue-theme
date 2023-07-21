@@ -1,4 +1,9 @@
 /* Reset */
+
+a, * {
+	text-decoration:none !important;
+	color:inherit;
+}
 html {
 	scroll-behavior: smooth;
 	padding:0;

@@ -6,11 +6,35 @@
  * 
  * ******************************************************/
 
-// Get extended post object on load - site_url()/wp-json/core-vue/extended
+// Get series of extended post objects on load - site_url()/wp-json/core-vue/extended
 add_action('rest_api_init', function () {
     register_rest_route( 'core-vue', '/get-reports',array(
         'methods'  => 'GET',
         'callback' => 'return_reports_data',
+        'permission_callback' => function() {
+            return true;
+        }
+    ));
+  });
+
+
+// Return previews of the array of items in the cart when hitting cart/checkout page - site_url()/wp-json/core-vue/cart
+add_action('rest_api_init', function () {
+    register_rest_route( 'core-vue', '/cart',array(
+        'methods'  => 'GET',
+        'callback' => 'return_reports_data',
+        'permission_callback' => function() {
+            return true;
+        }
+    ));
+  });
+
+
+// Return single report page in full - site_url()/wp-json/core-vue/single-report/{slug}
+add_action('rest_api_init', function () {
+    register_rest_route( 'core-vue', '/single-report/(?P<slug>[a-zA-Z0-9-]+)',array(
+        'methods'  => 'GET',
+        'callback' => 'return_single_report',
         'permission_callback' => function() {
             return true;
         }
@@ -27,17 +51,16 @@ add_action('rest_api_init', function () {
 
 function return_reports_data() {
 	
-	// Get all posts
     $reports_list = get_posts([
         'post_type' => 'report',
         'posts_per_page' => -1,
         'fields' => 'ids',
     ]);
 
-    // Loop through posts and add custom fields
     foreach($reports_list as $single) {
         $report_objects[] = array(
             'id' => $single,
+            'slug' => get_post_field('post_name', $single),
             'title' => get_the_title($single),
             'cover_image' => get_field('cover_image', $single),
             'short_desc' => get_field('report_description_short', $single),
@@ -47,7 +70,34 @@ function return_reports_data() {
         );
     }
 
-    // Return posts
     return $report_objects;
 	
+}
+
+
+function return_single_report( $request ) {
+    
+    $slug = (string) $request['slug'];
+    $post_obj = get_page_by_path($slug, OBJECT, 'report');
+
+    if(false === get_post_status($post_obj->ID) || null === $post_obj) {
+        return array("error", "No report with that ID exists");
+    }
+
+    $id = $post_obj->ID;
+
+    $single_report = array(
+        'id' => $id,
+        'slug' => $slug,
+        'title' => get_the_title($id),
+        'cover_image' => get_field('cover_image', $id),
+        'long_desc' => get_field('report_description_long', $id),
+        'price' => get_field('price', $id),
+        'release_date' => get_field('release_date', $id),
+        'expiry_date' => get_field('expiry_date', $id),
+        'teaser_file' => get_field('teaser', $id),
+    );
+
+    return $single_report;
+
 }
