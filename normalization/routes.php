@@ -42,6 +42,16 @@ add_action('rest_api_init', function () {
   });
 
 
+// Handle form submission on checkout page - site_url()/wp-json/core-vue/order-submission
+add_action('rest_api_init', function () {
+    register_rest_route( 'core-vue', '/order-submission',array(
+        'methods'  => 'POST',
+        'callback' => 'do_order_form_submission',
+        'permission_callback' => function() {
+            return true;
+        }
+    ));
+  });
 
 /*********************************************************
  * 
@@ -123,4 +133,11 @@ function return_cart_items($raw_data) {
     }
 
     return $return_array;
+}
+
+function do_order_form_submission($raw_data) {
+    $data = $raw_data->get_json_params();
+
+    return $data;
+
 }
