@@ -3,6 +3,7 @@
 a, * {
 	text-decoration:none !important;
 	color:inherit;
+	outline:none;
 }
 html {
 	scroll-behavior: smooth;
@@ -371,6 +372,15 @@ html {
 .single-report .col2 h1 {
 	margin-bottom:20px;
 }
+
+
+/*cart page*/
+.cart section {
+	align-items:flex-start;
+}
+.cart section .col.col2 {
+	padding-top:0px;
+}
 .cart .col1 {
 	background:var(--base-2);
 }
@@ -382,11 +392,14 @@ html {
 }
 .empty-cart svg {
 	width:160px;
+	color:var(--contrast-3);
 }
 .cart .full-cart {
 	display:flex;
 	flex-direction:column;
 	background:var(--base-2);
+	min-height:55vh;
+	justify-content:center;	
 }
 .cart .full-cart .cart-item {
 	flex:0 1 100%;
@@ -419,4 +432,120 @@ html {
 }
 .full-cart .cart-item:last-of-type {
 	border-bottom:none !important;
+}
+.full-cart .total {
+	display:flex;
+	flex-direction:column;
+	align-items:flex-end;
+	padding:20px;
+	font-size:14px;
+}
+
+/*Purchase form*/
+.cart .nb {
+	color:var(--message-0);
+}
+.cart sup {
+	color:var(--message-0);
+	position:relative;
+	top:3px;
+	font-weight:400;
+}
+.cart h1 {
+	margin-top:30px;
+	margin-bottom:30px;
+}
+.cart .purchase-form {
+	display:flex;
+	flex-direction:column;
+	padding:0;
+}
+.purchase-form label {
+	display:flex;
+	position:relative;
+	flex-direction:column;
+	margin:5px 0;
+}
+.purchase-form label span {
+	flex:0 1 100%;
+	font-size:14px;
+	color:var(--contrast-2);
+}
+.purchase-form label input:not(input[type="checkbox"]),
+.purchase-form label select {
+	flex:0 1 100%;
+	position:relative;
+	border:none;
+	outline:none;
+	background:var(--base-1);
+	padding:8px 10px;
+	max-width:80%;
+
+}
+.tandcs {
+	font-size:13px;
+	max-width:80%;
+	padding:20px 0;
+}
+.intro, .nb {
+	max-width:80%;
+	font-size:13px;
+	padding-top:0 !important;
+}
+.tandcs label {
+	display:flex;
+	flex-direction:row !important;
+	background:var(--base-1);
+	padding:10px;
+}
+.tandcs span {
+	flex:0 1 80% !important;
+	font-size:14px !important;
+}
+.tandcs input {
+	flex:0 1 10% !important;
+	max-width:15px;
+	margin-right:10px;
+	outline:none;
+}
+.submit-button {
+	width:45%;
+	border:none;
+	background:var(--accent-1);
+	color:var(--base-0);
+}
+.submit-button:hover,
+.submit-button:focus {
+	background:var(--accent-2);
+}
+.submit-button[disabled] {
+	background:var(--base-1) !important;
+	cursor:not-allowed;
+	color:var(--contrast-3);
+}
+.code-box {
+	max-width:80%;
+	padding:15px !important;
+	border:2px dashed var(--accent-2);
+}
+.code-box span {
+	font-weight:400;
+}
+.code-box * {
+	max-width:unset !important;
+}
+.purchase-form label input:focus,
+.purchase-form label select:focus {
+	box-shadow:0px 4px 3px -3px rgba(0,0,0,0.5);
+}
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px var(--base-1) inset !important;
 }
