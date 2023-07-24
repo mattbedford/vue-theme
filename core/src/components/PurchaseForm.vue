@@ -22,13 +22,13 @@
             <label><span>Company type <sup>*</sup></span>
                 <select name="company_type" v-model="contact.company_type" required>
                     <option disabled="" value="">What kind of company is yours?</option>
-                    <option value="Brand, Retailer, Manufacturer or Online Shop">Brand, Retailer, Manufacturer or Online Shop</option>
-                    <option value="Investor, Family Office,">Investor, Family Office, Business Angel</option>
-                    <option value="Media / Press">Media / Press / Journalism</option>
-                    <option value="Public Administration / Institution">Public Administration / Institution</option>
-                    <option value="Research Institute, University, School">Research Institute, University, School</option>
-                    <option value="Vendor / Supplier of Services">Vendor / Supplier of Services for Innovation and e-Commerce</option>
-                    <option value="Other">Other</option>
+                    <option value="brand">Brand, Retailer, Manufacturer or Online Shop</option>
+                    <option value="investor">Investor, Family Office, Business Angel</option>
+                    <option value="media">Media / Press / Journalism</option>
+                    <option value="institution">Public Administration / Institution</option>
+                    <option value="research">Research Institute, University, School</option>
+                    <option value="vendor">Vendor / Supplier of Services for Innovation and e-Commerce</option>
+                    <option value="other">Other</option>
                 </select>
             </label>
             <label class="code-box"><span>Do you have a code for free access? Enter it here.</span>
@@ -65,7 +65,7 @@ export default {
         last_name: '',
         email_address: '',
         company_name: '',
-        conpany_type: '',
+        company_type: '',
       },
       terms: false,
       coupon_code: '',
