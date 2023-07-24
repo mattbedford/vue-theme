@@ -1,0 +1,64 @@
+<template>
+    <div class="single-report page-wrap" :class="report.id">
+        <section class="section1">
+            <div class="col col1">
+                <img :src="report.cover_image">
+            </div>
+            <div class="col col2">
+                <router-link :to="{name: 'home', hash: '#reports-section'}">
+                    <button class="back-to">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="48" d="M244 400 100 256l144-144M120 256h292"/></svg>
+                        Back to reports
+                    </button>
+                </router-link>
+                <h1 v-html="report.title"></h1>
+                <h4 v-if="report.release_date && report.release_date !== ''" v-html="`Released: ${report.release_date}`"></h4>
+                <div class="description" v-html="report.long_desc"></div>
+                <div class="btns">
+                    <button v-if="$root.inCart.includes(report.id)" class="btn bad" @click="removeFromCart(report.id)">Remove from cart</button>
+                    <button v-else class="btn" @click="addToCart(report.id)">Add to cart</button>
+                    <a :href="report.teaser_file" download><button class="btn" v-if="report.teaser_file">Download preview</button></a>
+                </div>
+            </div>
+        </section>
+    </div>
+</template>
+
+<script>
+export default {
+  name: 'SingleReportView',
+
+  data() {
+    return {
+      report: [],
+    }
+  },
+  created() {
+    this.getSingleReport();
+  },
+  methods: {
+    getSingleReport: async function() {
+      this.report = [];
+      const url = `${this.rest_base}single-report/${this.$route.params.slug}`;
+      const headers = {
+        credentials: 'same-origin',
+        'Content-Type': 'application/json',
+        'X-WP-Nonce': this.nonce,
+      };
+      fetch(url, { method: 'GET', headers })
+        .then((result) => result.json())
+        .then((result) => { this.report = result; })
+        .catch((error) => {
+            console.log(error)
+            });
+    },
+    addToCart(reportId) {
+      this.$emit('addToCart', reportId);
+    },
+    removeFromCart(reportId) {
+      this.$emit('removeFromCart', reportId);
+    }
+  }
+}
+
+</script>
