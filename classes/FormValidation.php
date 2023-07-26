@@ -1,5 +1,5 @@
 <?php
-
+/*
 if(!defined('ABSPATH')){ 
     exit; 
 }
@@ -10,15 +10,28 @@ class FormValidation {
     private $original_cart_items;
     private $original_contact;
     private $original_coupon_code;
+
     public $validated_cart_items;
     public $validated_contact;
     public $validated_coupon_code;
     public $error;
 
     public function __construct($cart_items, $contact, $coupon_code){
-        $this->original_cart_items = $cart_items;
-        $this->original_contact = $contact;
-        $this->original_coupon_code = $coupon_code;
+        if(!empty($cart_items)) {
+            $this->original_cart_items = $cart_items;
+        } else {
+            $this->error[] = 'No items were selected. Please select at least one item and try again.';
+            return;
+        }
+
+        if(!empty($contact)) {
+            $this->original_contact = $contact;
+        } else {
+            $this->error[] = 'No contact details were provided. Please complete all fields and try again.';
+            return;
+        }
+
+        if(!empty($coupon_code)) $this->original_coupon_code = $coupon_code;
         $this->run_validation();
     }
 
@@ -115,16 +128,21 @@ class FormValidation {
     private function validate_coupon_code(){
 
         if( empty($this->original_coupon_code) ){
-            $this->validated_coupon_code = '';
+            $this->validated_coupon_code = false;
             return;
         }
 
         $this->validated_coupon_code = stripslashes(strip_tags(trim($this->original_coupon_code)));
 
-        FormValidation::validate_coupon_code_in_hubspot($this->validated_coupon_code);
-
         if( ! is_string($this->validated_coupon_code) ){
             $this->error[] = 'Coupon code was not valid. Please try again.';
+            return;
+        }
+
+        $hubspot_verified = self::verify_coupon_code_with_hubspot();
+
+        if( $hubspot_verified->total != 1 ){
+            $this->error[] = 'Coupon code does not seem to exist. Please check and try again.';
             return;
         }
 
@@ -133,20 +151,50 @@ class FormValidation {
     }
 
 
-    public static function validate_coupon_code_in_hubspot($coupon_code){
+    public static function verify_coupon_code_with_hubspot($coupon_code) {
 
-        $validated_coupon_code = stripslashes(strip_tags(trim($coupon_code)));
+        $url = "https://api.hubapi.com/crm/v3/objects/companies/search";
+        $data = array(
+            "limit" => 1,
+            "filterGroups" => array(
+                array( 
+                    "filters" => array(
+                        array(
+                            "value" => $coupon_code,
+                            "propertyName" => "observatory_portal_code",
+                            "operator" => "EQ"
+                        )
+                    )
+                )
+            ),
+        );
+    
+        $existing = self::triggerHubspotCurl($url, json_encode($data));
 
-        if( ! is_string($validated_coupon_code) ){
-            return false;
-        }
-
-        $hubspot_api_key = get_option('hubspot_api_key');
-
-        
-
-        return true;
+        return $existing;
 
     }
 
+
+    public static function triggerHubspotCurl($url, $fields_string) {
+        $hubspot_token = get_option('hubspot_key');
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+            'Content-Type:application/json',
+            'authorization: Bearer ' . $hubspot_token
+        ));
+        curl_setopt($curl, CURLOPT_POST, TRUE);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $fields_string);
+
+        $data = curl_exec($curl);
+        curl_close($curl);
+        return json_decode($data);
+    } 
+
+
+
 }
+
+*/

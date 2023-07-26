@@ -4,6 +4,8 @@ include 'normalization/cleanup.php';
 include 'normalization/routes.php';
 include 'normalization/post_setup.php';
 include 'normalization/external_scripts.php';
+include 'classes/AdminOptions.php';
+include 'normalization/db_setup.php';
 require 'script_loader.php';
 
 
