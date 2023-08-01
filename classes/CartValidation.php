@@ -17,7 +17,7 @@ class CartValidation extends ValidationMaster {
     }
 
 
-    private function validate_cart_items(){
+    public function validate_cart_items(){
         
         foreach( $this->validated_data as $item ){
 

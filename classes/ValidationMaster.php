@@ -37,7 +37,7 @@ class ValidationMaster {
         }
 
         if(is_array($this->original_data)){
-            $this->validated_data = array_map('sanitize_field', $this->original_data);
+            $this->validated_data = array_map( array($this, 'sanitize_field'), $this->original_data);
         } else {
             $this->validated_data = $this->sanitize_field($this->original_data);
         }

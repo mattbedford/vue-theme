@@ -12,7 +12,7 @@ function create_dagora_reports_database_table() {
 	//Badges & registrations table
 	global $wpdb;
 
-	$table_name = $wpdb->prefix . 'registrations';
+	$table_name = $wpdb->prefix . 'orders';
 	$charset_collate = $wpdb->get_charset_collate();
 
 	$sql = "CREATE TABLE $table_name (
@@ -28,12 +28,12 @@ function create_dagora_reports_database_table() {
 		payment_status text,
 		coupon_code text,
 		order_date DATE NOT NULL,
-		reports_delivered tinyint(1) DEFAULT '0' NOT NULL,
-		PRIMARY KEY  (id),
-        report_ids text,
+		report_ids text,
         report_names text,
+		reports_delivered tinyint(1) DEFAULT '0' NOT NULL,
+		PRIMARY KEY  (id)
 	) $charset_collate;";
 
-	require_once( 'ABSPATH' . 'wp-admin/includes/upgrade.php' );
+	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 	dbDelta( $sql );
 }

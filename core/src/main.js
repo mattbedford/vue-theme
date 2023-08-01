@@ -35,5 +35,6 @@ new Vue({
   render: h => h(App),
   data: {
     inCart: [],
+    ref: null,
   }
 }).$mount('#app')

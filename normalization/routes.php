@@ -53,6 +53,18 @@ add_action('rest_api_init', function () {
     ));
   });
 
+
+// Grab a summary of order and return to thank-you page - site_url()/wp-json/core-vue/order-summary
+add_action('rest_api_init', function () {
+    register_rest_route( 'core-vue', '/order-summary',array(
+        'methods'  => 'POST',
+        'callback' => 'send_report_summary',
+        'permission_callback' => function() {
+            return true;
+        }
+    ));
+  });
+
 /*********************************************************
  * 
  * 	DOING ROUTE CALLBACKS
@@ -138,6 +150,62 @@ function return_cart_items($raw_data) {
 function do_order_form_submission($raw_data) {
     $data = $raw_data->get_json_params();
 
-    return $data;
+    include_once(ABSPATH . 'wp-content/themes/dagora-reports-shop/classes/OrderFormSubmission.php');
+    $order = new OrderFormSubmission($data['cartItems'], $data['contact'], $data['coupon_code']);
+
+    if($order->return_status === 'success') {
+        return array(
+            'status' => 'success',
+            'message' => 'Order successfully submitted',
+            'order_id' => $order->registration_id,
+        );
+    } else {
+        return array(
+            'status' => 'error',
+            'message' => $order->return_status,
+        );
+    }
+
+}
+
+
+function send_report_summary($raw_data) {
+
+    $data = $raw_data->get_json_params();
+
+    $order_id = $data['ref'];
+
+    if(empty($order_id)) return array("Error", "No order ID provided");
+
+    global $wpdb;
+
+    $table = $wpdb->prefix . 'orders';
+    $order = $wpdb->get_row("SELECT * FROM $table WHERE id = '$order_id'");
+
+    if(empty($order)) return array("Error", "Order not found");
+
+    $payment_status = $order->payment_status;
+    $coupon_code_if_used = $order->coupon_code;
+
+    if($payment_status === 'coupon') {
+        $payment_method = 'Coupon';
+        $coupon_code = $coupon_code_if_used;
+    } else {
+        $payment_method = 'Online payment';
+        $coupon_code = null;
+    }
+
+    $year = date("Y");
+
+    $return_value = array(
+        'order_id' => 'DAG' . $year . $order->id,
+        'order_date' => $order->order_date,
+        'order_total' => $order->payment_amount,
+        'order_items' => explode(", ", $order->report_names),
+        'payment_method' => $payment_method,
+        'coupon_code' => $coupon_code,
+    );
+
+    return $return_value;
 
 }

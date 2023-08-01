@@ -2,7 +2,7 @@
 
 
 // Validates the coupon code, which is a string.
-// After instantiation, you need to call the validate_coupon_code() method to run the validation.
+// After instantiation, you need to call the validate_coupon() method to run the validation.
 // Check first whether or not we even have a coupon code to check though...
 
 class CouponValidation extends ValidationMaster {
@@ -11,14 +11,14 @@ class CouponValidation extends ValidationMaster {
     public $coupon_code;
 
 
-    public function validate_cart() {
+    public function validate_coupon() {
 
         $this->coupon_code = $this->validate_coupon_code();
 
     }
 
 
-    private function validate_coupon_code(){
+    public function validate_coupon_code(){
 
         if( ! is_string($this->validated_data) ){
             $this->error[] = 'Coupon code was not valid. Please try again.';

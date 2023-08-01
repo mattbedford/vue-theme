@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import ReportView from '../views/SingleReportView.vue'
 import CartView from '../views/CartView.vue'
+import ThankYouView from '../views/ThankYouView.vue'
 
 
 Vue.use(VueRouter)
@@ -30,6 +31,11 @@ const routes = [
     path: '/cart',
     name: 'cart',
     component: CartView
+  },
+  {
+    path: '/thank-you',
+    name: 'thank-you',
+    component: ThankYouView
   },
 ]
 

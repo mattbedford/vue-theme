@@ -549,3 +549,24 @@ select:-webkit-autofill:hover,
 select:-webkit-autofill:focus {
   -webkit-box-shadow: 0 0 0px 1000px var(--base-1) inset !important;
 }
+
+/*Thank you summary page*/
+.order-details-wrap {
+	background: var(--base-2);
+    border-radius: 6px;
+	padding:40px;
+}
+.order-summary-item {
+	display:flex;
+	font-size:14px;
+	margin-top:5px;
+}
+.order-summary-item * {
+	font-size:14px;
+}
+.order-summary-item h5 {
+	margin-right:10px;
+}
+.order-summary-list {
+	margin-top:10px;
+}

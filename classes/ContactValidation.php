@@ -17,9 +17,9 @@ class ContactValidation extends ValidationMaster {
     }
 
 
-    private function validate_contact_data() {
+    public function validate_contact_data() {
 
-        if( ! is_email($this->validated_data['email']) ){
+        if( ! is_email($this->validated_data['email_address']) ){
             $this->error[] = 'Please enter a valid email address.';
             return;
         }

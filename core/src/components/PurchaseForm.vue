@@ -16,6 +16,9 @@
             <label><span>Email <sup>*</sup></span>
                 <input type="text" name="email_address" v-model="contact.email_address" required>
             </label>
+            <label><span>Job title <sup>*</sup></span>
+                <input type="text" name="job_title" v-model="contact.job_title" required>
+            </label>
             <label><span>Company <sup>*</sup></span>
                 <input type="text" name="company_name" v-model="contact.company_name" required>
             </label>
@@ -66,6 +69,7 @@ export default {
         email_address: '',
         company_name: '',
         company_type: '',
+        job_title: '',
       },
       terms: false,
       coupon_code: '',
@@ -92,7 +96,13 @@ export default {
         };
         fetch(url, { method: "POST", headers, body: JSON.stringify(data) })
             .then((result) => result.json())
-            .then((result) => { console.log(result); });
+            .then((result) => { 
+                if(result.status === 'success') {
+                    this.$root.inCart = [];
+                    this.$root.ref = result.order_id;
+                    this.$router.push({ name: 'thank-you' });
+                }
+             });
     },
   },
   computed: {
