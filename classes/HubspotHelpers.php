@@ -23,6 +23,9 @@ class HubspotHelpers {
                     )
                 )
             ),
+            "sorts" => array("id"),
+            "properties" => array("id"),
+            "after" => 0,
         );
     
         $existing = self::triggerHubspotCurl($url, json_encode($data));
@@ -34,7 +37,10 @@ class HubspotHelpers {
 
     // General purpose HS API interrgogation function.
     public static function triggerHubspotCurl($url, $fields_string) {
-        $hubspot_token = get_option('hubspot_key');
+      	// Stupid, convoluted way to get a basic fucking option....
+      	$global_opts = get_option('wporg_options');
+        $hubspot_token = $global_opts['hubspot_api_key'];
+      
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);

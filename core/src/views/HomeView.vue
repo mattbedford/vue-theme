@@ -28,6 +28,7 @@
         <div class="list-reports">
           <div class="report" v-for="report in reports" :key="report.id">
             <div class="report-img">
+              <span class="home-report-price" v-html="calcCHF(report.price)"></span>
               <img :src="report.cover_image" alt="">
             </div>
             <div class="report-content">
@@ -89,7 +90,10 @@ export default {
     },
     removeFromCart(reportId) {
       this.$emit('removeFromCart', reportId);
-    }
+    },
+    calcCHF(price) {
+      return `CHF ${parseFloat(price).toFixed(2)}`;
+    },
   },
 }
 </script>

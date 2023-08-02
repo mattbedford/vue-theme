@@ -161,8 +161,8 @@ function do_order_form_submission($raw_data) {
         );
     } else {
         return array(
-            'status' => 'error',
-            'message' => $order->return_status,
+            'status' => $order->return_status,
+            'message' => $order->return_message,
         );
     }
 

@@ -32,12 +32,6 @@ class AdminOptions {
 			'type' => 'text',
 		],
 		[
-			'id' => 'stripe_webhook_secret',
-			'label' => 'Stripe webhook secret',
-			'description' => '',
-			'type' => 'text',
-		],
-		[
 			'id' => 'hubspot_api_key',
 			'label' => 'HubSpot API key',
 			'description' => '',

@@ -23,15 +23,15 @@ function get_vue() {
 			break;
 		
 		case false:
-			$app_root = site_url() . "/wp-content/themes/dagora-reports-shop/core/js/";
-			$app = "app.1b72acf7.js";
-			$chunks = "chunk-vendors.08d9be34.js";
+			$app_root = site_url() . "/wp-content/themes/dagora-reports-shop/dist/js/";
+			$app = "app.36842e80.js";
+			$chunks = "chunk-vendors.7d5be71f.js";
 			break;
 
 		default:
-			$app_root = site_url() . "/wp-content/themes/dagora-reports-shop/core/js/";
-			$app = "app.1b72acf7.js";
-			$chunks = "chunk-vendors.08d9be34.js";
+			$app_root = site_url() . "/wp-content/themes/dagora-reports-shop/dist/js/";
+			$app = "app.36842e80.js";
+			$chunks = "chunk-vendors.7d5be71f.js";
 			break;
 	}
 
@@ -50,7 +50,7 @@ function get_vue() {
 		true
 	);
 
-	// Single extra page scripts (only on staging)
+	// Single extra page scripts (only on staging) - probably not needed since refactor of about page import (w/ no chunks)
 	wp_register_script( // ABOUT PAGE
 		'vue_app_about',
 		$app_root . 'about.js',

@@ -13,6 +13,7 @@
                 </router-link>
                 <h1 v-html="report.title"></h1>
                 <h4 v-if="report.release_date && report.release_date !== ''" v-html="`Released: ${report.release_date}`"></h4>
+                <h4 class="single-report-price" v-html="calcCHF(report.price)"></h4>
                 <div class="description" v-html="report.long_desc"></div>
                 <div class="btns">
                     <button v-if="$root.inCart.includes(report.id)" class="btn bad" @click="removeFromCart(report.id)">Remove from cart</button>
@@ -57,7 +58,10 @@ export default {
     },
     removeFromCart(reportId) {
       this.$emit('removeFromCart', reportId);
-    }
+    },
+    calcCHF(price) {
+      return `CHF ${parseFloat(price).toFixed(2)}`;
+    },
   }
 }
 

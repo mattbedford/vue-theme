@@ -5,17 +5,14 @@
 // After instantiation, you need to call the validate_coupon() method to run the validation.
 // Check first whether or not we even have a coupon code to check though...
 
+// If the coupon code is valid, the $coupon_code property will be set to the validated coupon code.
+// If coupon code provided BUT not valid, the $error property will be set to an array of error messages.
+// If no coupon code provided, this function will do nothing.
+
 class CouponValidation extends ValidationMaster {
 
 
     public $coupon_code;
-
-
-    public function validate_coupon() {
-
-        $this->coupon_code = $this->validate_coupon_code();
-
-    }
 
 
     public function validate_coupon_code(){
@@ -32,7 +29,7 @@ class CouponValidation extends ValidationMaster {
             return;
         }
 
-        return $this->validated_data;
+        $this->coupon_code = $this->validated_data;
 
     }
 

@@ -26,24 +26,30 @@ if(!defined('ABSPATH')){
 
 class OrderFormSubmission {
 
+    public $error;
     public $cart_items;
     public $contact;
     public $coupon_code;
     public $payment_required;
     public $registration_id; // From db on successful order registration
+    public $return_message; // Read by front-end app to determine whether to show success or error message
     public $return_status; // Read by front-end app to determine whether to show success or error message
 
 
     public function __construct($cart_items, $contact, $coupon_code){
 
+        $this->error = false;
         $this->cart_items = $cart_items;
         $this->contact = $contact;
         $this->coupon_code = $coupon_code;
+        $this->payment_required = true;
 
-        $this->do_includes();    
+        $this->do_includes();
         $this->do_cart();
         $this->do_contact();
         $this->do_coupon();
+
+        if($this->error === true) return;
         
         if($this->payment_required === true){
             $this->do_payment();
@@ -52,6 +58,7 @@ class OrderFormSubmission {
         $this->save_order();
 
         // Do actual sending of report here
+      	// Handle this as an entirely separate class, though...
                 
         $this->handle_success();
         
@@ -60,18 +67,13 @@ class OrderFormSubmission {
 
     public function handle_success() {
 
+        //Send report to user via email
         //$this->update_hubspot(); MAYBE... not sure yet
-        $this->redirect_to_success();
+        $this->return_status = 'success';
+        $this->return_message = 'Your order has been successfully received. Please check your email for your download link.';
 
     }
     
-
-    public function redirect_to_success() {
-
-        $this->return_status = 'success';
-
-    }
-
     private function save_order() {
         global $wpdb;
 	
@@ -122,6 +124,7 @@ class OrderFormSubmission {
 
         // Process payment
 
+
     }
 
 
@@ -131,7 +134,10 @@ class OrderFormSubmission {
         $validated_cart->validate_cart();
 
         if(!empty($validated_cart->error)){
-            // Handle error here
+             $this->return_status = 'error';
+             $this->return_message = $validated_cart->error[0];
+             $this->error = true;
+          	 return;
         } else {
             $this->cart_items = $validated_cart->cart_data;
         }
@@ -145,7 +151,10 @@ class OrderFormSubmission {
         $validated_contact->validate_contact();
 
         if(!empty($validated_contact->error)){
-            // Handle error here
+            $this->return_status = 'error';
+            $this->return_message = $validated_contact->error[0];
+            $this->error = true;
+            return;
         } else {
             $this->contact = $validated_contact->contact_data;
         }
@@ -156,8 +165,8 @@ class OrderFormSubmission {
     public function do_coupon() {
 
         if(empty($this->coupon_code)){
-            $this->coupon_code = false; // should this be false or null?
-            $this->payment_required = false; // forced to false ONLY for testing
+            $this->coupon_code = false; 
+            $this->payment_required = true; // Can be set to FALSE for testing
             return;
         }
                 
@@ -165,14 +174,12 @@ class OrderFormSubmission {
         $validated_coupon->validate_coupon_code();
 
         if(!empty($validated_coupon->error)){
-            // Handle error here
+            $this->return_status = 'error';
+            $this->return_message = $validated_coupon->error[0];
+            $this->error = true;
+            return;
         } else {
             $this->coupon_code = $validated_coupon->coupon_code;
-        }
-
-        if($validated_coupon->coupon_code !== false){
-            $this->payment_required = true;
-        } else {
             $this->payment_required = false;
         }
 

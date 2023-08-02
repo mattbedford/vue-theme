@@ -345,6 +345,23 @@ html {
 	background-color:var(--message-0);
   }	
 
+.report-img {
+	position:relative;
+}
+.home-report-price {
+	display:block;
+	position:absolute;
+	bottom:0px;
+	left:0;
+	font-size:14px;
+	font-weight:500;
+	background:var(--contrast-3);
+	margin-bottom:20px;
+	padding:4px;
+	z-index:10;
+}
+
+
   /*Singles*/
 .back-to {
 	display:flex;
@@ -371,6 +388,13 @@ html {
 }
 .single-report .col2 h1 {
 	margin-bottom:20px;
+}
+.single-report-price {
+	display:inline-block;
+	padding:4px;
+	margin:10px 0;
+	background:var(--accent-1);
+	color:var(--base-0);
 }
 
 
