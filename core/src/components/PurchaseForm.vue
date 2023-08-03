@@ -148,7 +148,7 @@ export default {
                     this.announce.message = result.message;
                 }
                 if(result.status === 'stripe') {
-                    window.location.href = result.url;
+                    window.location.href = result.message;
                 }
              });
     },
