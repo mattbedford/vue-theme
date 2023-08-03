@@ -38,55 +38,6 @@ class ReaderService extends \Stripe\Service\AbstractService
     }
 
     /**
-     * Initiates an input collection flow on a Reader.
-     *
-     * @param string $id
-     * @param null|array $params
-     * @param null|array|\Stripe\Util\RequestOptions $opts
-     *
-     * @throws \Stripe\Exception\ApiErrorException if the request fails
-     *
-     * @return \Stripe\Terminal\Reader
-     */
-    public function collectInputs($id, $params = null, $opts = null)
-    {
-        return $this->request('post', $this->buildPath('/v1/terminal/readers/%s/collect_inputs', $id), $params, $opts);
-    }
-
-    /**
-     * Initiates a payment flow on a Reader and updates the PaymentIntent with card
-     * details before manual confirmation.
-     *
-     * @param string $id
-     * @param null|array $params
-     * @param null|array|\Stripe\Util\RequestOptions $opts
-     *
-     * @throws \Stripe\Exception\ApiErrorException if the request fails
-     *
-     * @return \Stripe\Terminal\Reader
-     */
-    public function collectPaymentMethod($id, $params = null, $opts = null)
-    {
-        return $this->request('post', $this->buildPath('/v1/terminal/readers/%s/collect_payment_method', $id), $params, $opts);
-    }
-
-    /**
-     * Finalizes a payment on a Reader.
-     *
-     * @param string $id
-     * @param null|array $params
-     * @param null|array|\Stripe\Util\RequestOptions $opts
-     *
-     * @throws \Stripe\Exception\ApiErrorException if the request fails
-     *
-     * @return \Stripe\Terminal\Reader
-     */
-    public function confirmPaymentIntent($id, $params = null, $opts = null)
-    {
-        return $this->request('post', $this->buildPath('/v1/terminal/readers/%s/confirm_payment_intent', $id), $params, $opts);
-    }
-
-    /**
      * Creates a new <code>Reader</code> object.
      *
      * @param null|array $params

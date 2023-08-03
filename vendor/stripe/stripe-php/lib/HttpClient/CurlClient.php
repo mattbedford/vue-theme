@@ -193,73 +193,46 @@ class CurlClient implements ClientInterface, StreamingClientInterface
 
     // END OF USER DEFINED TIMEOUTS
 
-    /**
-     * @param 'delete'|'get'|'post' $method
-     * @param string $absUrl
-     * @param string $params
-     * @param bool $hasFile
-     * @param 'preview'|'standard' $apiMode
-     */
-    private function constructUrlAndBody($method, $absUrl, $params, $hasFile, $apiMode)
+    private function constructRequest($method, $absUrl, $headers, $params, $hasFile)
     {
-        $params = Util\Util::objectsToIds($params);
-        if ('post' === $method) {
-            $absUrl = Util\Util::utf8($absUrl);
-            if ($hasFile) {
-                return [$absUrl, $params];
-            }
-            if ('preview' === $apiMode) {
-                return [$absUrl, \json_encode($params)];
-            }
+        $method = \strtolower($method);
 
-            return [$absUrl, Util\Util::encodeParameters($params)];
-        }
-        if ($hasFile) {
-            throw new Exception\UnexpectedValueException("Unexpected. {$method} methods don't support file attachments");
-        }
-        if (0 === \count($params)) {
-            return [Util\Util::utf8($absUrl), null];
-        }
-        $encoded = Util\Util::encodeParameters($params);
-
-        $absUrl = "{$absUrl}?{$encoded}";
-        $absUrl = Util\Util::utf8($absUrl);
-
-        return [$absUrl, null];
-    }
-
-    private function calculateDefaultOptions($method, $absUrl, $headers, $params, $hasFile)
-    {
+        $opts = [];
         if (\is_callable($this->defaultOptions)) { // call defaultOptions callback, set options to return value
-            $ret = \call_user_func_array($this->defaultOptions, [$method, $absUrl, $headers, $params, $hasFile]);
-            if (!\is_array($ret)) {
+            $opts = \call_user_func_array($this->defaultOptions, \func_get_args());
+            if (!\is_array($opts)) {
                 throw new Exception\UnexpectedValueException('Non-array value returned by defaultOptions CurlClient callback');
             }
-
-            return $ret;
-        }
-        if (\is_array($this->defaultOptions)) { // set default curlopts from array
-            return $this->defaultOptions;
+        } elseif (\is_array($this->defaultOptions)) { // set default curlopts from array
+            $opts = $this->defaultOptions;
         }
 
-        return [];
-    }
+        $params = Util\Util::objectsToIds($params);
 
-    private function constructCurlOptions($method, $absUrl, $headers, $body, $opts)
-    {
         if ('get' === $method) {
+            if ($hasFile) {
+                throw new Exception\UnexpectedValueException(
+                    'Issuing a GET request with a file parameter'
+                );
+            }
             $opts[\CURLOPT_HTTPGET] = 1;
+            if (\count($params) > 0) {
+                $encoded = Util\Util::encodeParameters($params);
+                $absUrl = "{$absUrl}?{$encoded}";
+            }
         } elseif ('post' === $method) {
             $opts[\CURLOPT_POST] = 1;
+            $opts[\CURLOPT_POSTFIELDS] = $hasFile ? $params : Util\Util::encodeParameters($params);
         } elseif ('delete' === $method) {
             $opts[\CURLOPT_CUSTOMREQUEST] = 'DELETE';
+            if (\count($params) > 0) {
+                $encoded = Util\Util::encodeParameters($params);
+                $absUrl = "{$absUrl}?{$encoded}";
+            }
         } else {
             throw new Exception\UnexpectedValueException("Unrecognized method {$method}");
         }
 
-        if ($body) {
-            $opts[\CURLOPT_POSTFIELDS] = $body;
-        }
         // It is only safe to retry network failures on POST requests if we
         // add an Idempotency-Key header
         if (('post' === $method) && (Stripe::$maxNetworkRetries > 0)) {
@@ -282,6 +255,7 @@ class CurlClient implements ClientInterface, StreamingClientInterface
         // sending an empty `Expect:` header.
         $headers[] = 'Expect: ';
 
+        $absUrl = Util\Util::utf8($absUrl);
         $opts[\CURLOPT_URL] = $absUrl;
         $opts[\CURLOPT_RETURNTRANSFER] = true;
         $opts[\CURLOPT_CONNECTTIMEOUT] = $this->connectTimeout;
@@ -306,56 +280,22 @@ class CurlClient implements ClientInterface, StreamingClientInterface
             $opts[\CURLOPT_IPRESOLVE] = \CURL_IPRESOLVE_V4;
         }
 
-        return $opts;
-    }
-
-    /**
-     * @param 'delete'|'get'|'post' $method
-     * @param string $absUrl
-     * @param array $headers
-     * @param array $params
-     * @param bool $hasFile
-     * @param 'preview'|'standard' $apiMode
-     */
-    private function constructRequest($method, $absUrl, $headers, $params, $hasFile, $apiMode)
-    {
-        $method = \strtolower($method);
-
-        $opts = $this->calculateDefaultOptions($method, $absUrl, $headers, $params, $hasFile);
-        list($absUrl, $body) = $this->constructUrlAndBody($method, $absUrl, $params, $hasFile, $apiMode);
-        $opts = $this->constructCurlOptions($method, $absUrl, $headers, $body, $opts);
-
         return [$opts, $absUrl];
     }
 
-    /**
-     * @param 'delete'|'get'|'post' $method
-     * @param string $absUrl
-     * @param array $headers
-     * @param array $params
-     * @param bool $hasFile
-     * @param 'preview'|'standard' $apiMode
-     */
-    public function request($method, $absUrl, $headers, $params, $hasFile, $apiMode = 'standard')
+    public function request($method, $absUrl, $headers, $params, $hasFile)
     {
-        list($opts, $absUrl) = $this->constructRequest($method, $absUrl, $headers, $params, $hasFile, $apiMode);
+        list($opts, $absUrl) = $this->constructRequest($method, $absUrl, $headers, $params, $hasFile);
+
         list($rbody, $rcode, $rheaders) = $this->executeRequestWithRetries($opts, $absUrl);
 
         return [$rbody, $rcode, $rheaders];
     }
 
-    /**
-     * @param 'delete'|'get'|'post' $method
-     * @param string $absUrl
-     * @param array $headers
-     * @param array $params
-     * @param bool $hasFile
-     * @param callable $readBodyChunk
-     * @param 'preview'|'standard' $apiMode
-     */
-    public function requestStream($method, $absUrl, $headers, $params, $hasFile, $readBodyChunk, $apiMode = 'standard')
+    public function requestStream($method, $absUrl, $headers, $params, $hasFile, $readBodyChunk)
     {
-        list($opts, $absUrl) = $this->constructRequest($method, $absUrl, $headers, $params, $hasFile, $apiMode);
+        list($opts, $absUrl) = $this->constructRequest($method, $absUrl, $headers, $params, $hasFile);
+
         $opts[\CURLOPT_RETURNTRANSFER] = false;
         list($rbody, $rcode, $rheaders) = $this->executeStreamingRequestWithRetries($opts, $absUrl, $readBodyChunk);
 

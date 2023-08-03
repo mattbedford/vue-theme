@@ -9,21 +9,18 @@ namespace Stripe\Service;
  *
  * @property AccountLinkService $accountLinks
  * @property AccountService $accounts
- * @property AccountSessionService $accountSessions
  * @property ApplePayDomainService $applePayDomains
  * @property ApplicationFeeService $applicationFees
  * @property Apps\AppsServiceFactory $apps
  * @property BalanceService $balance
  * @property BalanceTransactionService $balanceTransactions
  * @property BillingPortal\BillingPortalServiceFactory $billingPortal
- * @property Capital\CapitalServiceFactory $capital
  * @property ChargeService $charges
  * @property Checkout\CheckoutServiceFactory $checkout
  * @property CountrySpecService $countrySpecs
  * @property CouponService $coupons
  * @property CreditNoteService $creditNotes
  * @property CustomerService $customers
- * @property CustomerSessionService $customerSessions
  * @property DisputeService $disputes
  * @property EphemeralKeyService $ephemeralKeys
  * @property EventService $events
@@ -31,24 +28,20 @@ namespace Stripe\Service;
  * @property FileLinkService $fileLinks
  * @property FileService $files
  * @property FinancialConnections\FinancialConnectionsServiceFactory $financialConnections
- * @property GiftCards\GiftCardsServiceFactory $giftCards
  * @property Identity\IdentityServiceFactory $identity
  * @property InvoiceItemService $invoiceItems
  * @property InvoiceService $invoices
  * @property Issuing\IssuingServiceFactory $issuing
  * @property MandateService $mandates
  * @property OAuthService $oauth
- * @property OrderService $orders
  * @property PaymentIntentService $paymentIntents
  * @property PaymentLinkService $paymentLinks
- * @property PaymentMethodConfigurationService $paymentMethodConfigurations
  * @property PaymentMethodService $paymentMethods
  * @property PayoutService $payouts
  * @property PlanService $plans
  * @property PriceService $prices
  * @property ProductService $products
  * @property PromotionCodeService $promotionCodes
- * @property QuotePhaseService $quotePhases
  * @property QuoteService $quotes
  * @property Radar\RadarServiceFactory $radar
  * @property RefundService $refunds
@@ -81,21 +74,18 @@ class CoreServiceFactory extends \Stripe\Service\AbstractServiceFactory
     private static $classMap = [
         'accountLinks' => AccountLinkService::class,
         'accounts' => AccountService::class,
-        'accountSessions' => AccountSessionService::class,
         'applePayDomains' => ApplePayDomainService::class,
         'applicationFees' => ApplicationFeeService::class,
         'apps' => Apps\AppsServiceFactory::class,
         'balance' => BalanceService::class,
         'balanceTransactions' => BalanceTransactionService::class,
         'billingPortal' => BillingPortal\BillingPortalServiceFactory::class,
-        'capital' => Capital\CapitalServiceFactory::class,
         'charges' => ChargeService::class,
         'checkout' => Checkout\CheckoutServiceFactory::class,
         'countrySpecs' => CountrySpecService::class,
         'coupons' => CouponService::class,
         'creditNotes' => CreditNoteService::class,
         'customers' => CustomerService::class,
-        'customerSessions' => CustomerSessionService::class,
         'disputes' => DisputeService::class,
         'ephemeralKeys' => EphemeralKeyService::class,
         'events' => EventService::class,
@@ -103,24 +93,20 @@ class CoreServiceFactory extends \Stripe\Service\AbstractServiceFactory
         'fileLinks' => FileLinkService::class,
         'files' => FileService::class,
         'financialConnections' => FinancialConnections\FinancialConnectionsServiceFactory::class,
-        'giftCards' => GiftCards\GiftCardsServiceFactory::class,
         'identity' => Identity\IdentityServiceFactory::class,
         'invoiceItems' => InvoiceItemService::class,
         'invoices' => InvoiceService::class,
         'issuing' => Issuing\IssuingServiceFactory::class,
         'mandates' => MandateService::class,
         'oauth' => OAuthService::class,
-        'orders' => OrderService::class,
         'paymentIntents' => PaymentIntentService::class,
         'paymentLinks' => PaymentLinkService::class,
-        'paymentMethodConfigurations' => PaymentMethodConfigurationService::class,
         'paymentMethods' => PaymentMethodService::class,
         'payouts' => PayoutService::class,
         'plans' => PlanService::class,
         'prices' => PriceService::class,
         'products' => ProductService::class,
         'promotionCodes' => PromotionCodeService::class,
-        'quotePhases' => QuotePhaseService::class,
         'quotes' => QuoteService::class,
         'radar' => Radar\RadarServiceFactory::class,
         'refunds' => RefundService::class,

@@ -1,7 +1,7 @@
 <template>
 
       <div class="cart page-wrap">
-        <h1>Cart | Access the reports</h1>
+        <h1>Cart | {{ page.headline1 }}</h1>
         <router-link :to="{name: 'home', hash: '#reports-section'}">
             <button class="back-to">
                 <svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="48" d="M244 400 100 256l144-144M120 256h292"/></svg>
@@ -27,7 +27,7 @@
                 </div>
             </div>
             <div class="col col2">
-                <PurchaseForm />
+                <PurchaseForm :headline="page.headline2" :textarea="page.textarea2" />
             </div>
         </section>
       </div>
@@ -42,12 +42,25 @@ export default {
     components: { PurchaseForm },
     data() {
         return {
-            items: [],
+          page: {
+            headline1: '',
+            textarea1: '',
+            image1: '',
+            headline2: '',
+            textarea2: null,
+            image2: '',
+            cta: '',
+            externalLink: null,
+          },
+          items: [],
         };
     },
     created() {
         if (this.$root.inCart && this.$root.inCart.length > 0)
             this.getCartItems();
+    },
+    mounted() {
+      this.getPage();
     },
     computed: {
       totalPrice: function() {
@@ -55,6 +68,18 @@ export default {
       }
     },
     methods: {
+      async getPage() {
+          const url = `${this.rest_base}get-page`;
+          const data = { slug: 'cart' };
+          const headers = {
+            credentials: 'same-origin',
+            'Content-Type': 'application/json',
+            'X-WP-Nonce': this.nonce,
+          };
+          fetch(url, { method: 'POST', headers, body: JSON.stringify(data) })
+            .then((result) => result.json())
+            .then((result) => { this.page = result; });
+        },
         removeFromCart(reportId, index) {
             this.$emit("removeFromCart", reportId);
             this.items.splice(index, 1);

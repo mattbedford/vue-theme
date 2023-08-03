@@ -42,15 +42,12 @@ namespace Stripe;
  * @property \Stripe\StripeObject $metadata Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach to an object. This can be useful for storing additional information about the object in a structured format. For more information, see the <a href="https://stripe.com/docs/payments/payment-intents/creating-payment-intents#storing-information-in-metadata">documentation</a>.
  * @property null|\Stripe\StripeObject $next_action If present, this property tells you what actions you need to take in order for your customer to fulfill a payment using the provided source.
  * @property null|string|\Stripe\Account $on_behalf_of The account (if any) for which the funds of the PaymentIntent are intended. See the PaymentIntents <a href="https://stripe.com/docs/payments/connected-accounts">use case for connected accounts</a> for details.
- * @property null|\Stripe\StripeObject $payment_details
  * @property null|string|\Stripe\PaymentMethod $payment_method ID of the payment method used in this PaymentIntent.
- * @property null|\Stripe\StripeObject $payment_method_configuration_details Information about the payment method configuration used for this PaymentIntent.
  * @property null|\Stripe\StripeObject $payment_method_options Payment-method-specific configuration for this PaymentIntent.
  * @property string[] $payment_method_types The list of payment method types (e.g. card) that this PaymentIntent is allowed to use.
  * @property null|\Stripe\StripeObject $processing If present, this property tells you about the processing state of the payment.
  * @property null|string $receipt_email Email address that the receipt for the resulting payment will be sent to. If <code>receipt_email</code> is specified for a payment in live mode, a receipt will be sent regardless of your <a href="https://dashboard.stripe.com/account/emails">email settings</a>.
  * @property null|string|\Stripe\Review $review ID of the review associated with this PaymentIntent, if any.
- * @property null|string $secret_key_confirmation Indicates whether confirmation for this PaymentIntent using a secret key is <code>required</code> or <code>optional</code>.
  * @property null|string $setup_future_usage <p>Indicates that you intend to make future payments with this PaymentIntent's payment method.</p><p>Providing this parameter will <a href="https://stripe.com/docs/payments/save-during-payment">attach the payment method</a> to the PaymentIntent's Customer, if present, after the PaymentIntent is confirmed and any required actions from the user are complete. If no Customer was provided, the payment method can still be <a href="https://stripe.com/docs/api/payment_methods/attach">attached</a> to a Customer after the transaction completes.</p><p>When processing card payments, Stripe also uses <code>setup_future_usage</code> to dynamically optimize your payment flow and comply with regional legislation and network rules, such as <a href="https://stripe.com/docs/strong-customer-authentication">SCA</a>.</p>
  * @property null|\Stripe\StripeObject $shipping Shipping information for this PaymentIntent.
  * @property null|string|\Stripe\Account|\Stripe\BankAccount|\Stripe\Card|\Stripe\Source $source This is a legacy field that will be removed in the future. It is the ID of the Source object that is associated with this PaymentIntent, if one was supplied.
@@ -70,8 +67,23 @@ class PaymentIntent extends ApiResource
     use ApiOperations\Search;
     use ApiOperations\Update;
 
-    const SECRET_KEY_CONFIRMATION_OPTIONAL = 'optional';
-    const SECRET_KEY_CONFIRMATION_REQUIRED = 'required';
+    const CANCELLATION_REASON_ABANDONED = 'abandoned';
+    const CANCELLATION_REASON_AUTOMATIC = 'automatic';
+    const CANCELLATION_REASON_DUPLICATE = 'duplicate';
+    const CANCELLATION_REASON_FAILED_INVOICE = 'failed_invoice';
+    const CANCELLATION_REASON_FRAUDULENT = 'fraudulent';
+    const CANCELLATION_REASON_REQUESTED_BY_CUSTOMER = 'requested_by_customer';
+    const CANCELLATION_REASON_VOID_INVOICE = 'void_invoice';
+
+    const CAPTURE_METHOD_AUTOMATIC = 'automatic';
+    const CAPTURE_METHOD_AUTOMATIC_ASYNC = 'automatic_async';
+    const CAPTURE_METHOD_MANUAL = 'manual';
+
+    const CONFIRMATION_METHOD_AUTOMATIC = 'automatic';
+    const CONFIRMATION_METHOD_MANUAL = 'manual';
+
+    const SETUP_FUTURE_USAGE_OFF_SESSION = 'off_session';
+    const SETUP_FUTURE_USAGE_ON_SESSION = 'on_session';
 
     const STATUS_CANCELED = 'canceled';
     const STATUS_PROCESSING = 'processing';
@@ -189,7 +201,7 @@ class PaymentIntent extends ApiResource
      *
      * @throws \Stripe\Exception\ApiErrorException if the request fails
      *
-     * @return \Stripe\SearchResult<PaymentIntent> the payment intent search results
+     * @return \Stripe\SearchResult<\Stripe\PaymentIntent> the payment intent search results
      */
     public static function search($params = null, $opts = null)
     {

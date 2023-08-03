@@ -8,7 +8,6 @@ namespace Stripe;
  * Client used to send requests to Stripe's API.
  *
  * @property \Stripe\Service\AccountLinkService $accountLinks
- * @property \Stripe\Service\AccountSessionService $accountSessions
  * @property \Stripe\Service\AccountService $accounts
  * @property \Stripe\Service\ApplePayDomainService $applePayDomains
  * @property \Stripe\Service\ApplicationFeeService $applicationFees
@@ -16,13 +15,11 @@ namespace Stripe;
  * @property \Stripe\Service\BalanceService $balance
  * @property \Stripe\Service\BalanceTransactionService $balanceTransactions
  * @property \Stripe\Service\BillingPortal\BillingPortalServiceFactory $billingPortal
- * @property \Stripe\Service\Capital\CapitalServiceFactory $capital
  * @property \Stripe\Service\ChargeService $charges
  * @property \Stripe\Service\Checkout\CheckoutServiceFactory $checkout
  * @property \Stripe\Service\CountrySpecService $countrySpecs
  * @property \Stripe\Service\CouponService $coupons
  * @property \Stripe\Service\CreditNoteService $creditNotes
- * @property \Stripe\Service\CustomerSessionService $customerSessions
  * @property \Stripe\Service\CustomerService $customers
  * @property \Stripe\Service\DisputeService $disputes
  * @property \Stripe\Service\EphemeralKeyService $ephemeralKeys
@@ -31,24 +28,20 @@ namespace Stripe;
  * @property \Stripe\Service\FileLinkService $fileLinks
  * @property \Stripe\Service\FileService $files
  * @property \Stripe\Service\FinancialConnections\FinancialConnectionsServiceFactory $financialConnections
- * @property \Stripe\Service\GiftCards\GiftCardsServiceFactory $giftCards
  * @property \Stripe\Service\Identity\IdentityServiceFactory $identity
  * @property \Stripe\Service\InvoiceItemService $invoiceItems
  * @property \Stripe\Service\InvoiceService $invoices
  * @property \Stripe\Service\Issuing\IssuingServiceFactory $issuing
  * @property \Stripe\Service\MandateService $mandates
  * @property \Stripe\Service\OAuthService $oauth
- * @property \Stripe\Service\OrderService $orders
  * @property \Stripe\Service\PaymentIntentService $paymentIntents
  * @property \Stripe\Service\PaymentLinkService $paymentLinks
- * @property \Stripe\Service\PaymentMethodConfigurationService $paymentMethodConfigurations
  * @property \Stripe\Service\PaymentMethodService $paymentMethods
  * @property \Stripe\Service\PayoutService $payouts
  * @property \Stripe\Service\PlanService $plans
  * @property \Stripe\Service\PriceService $prices
  * @property \Stripe\Service\ProductService $products
  * @property \Stripe\Service\PromotionCodeService $promotionCodes
- * @property \Stripe\Service\QuotePhaseService $quotePhases
  * @property \Stripe\Service\QuoteService $quotes
  * @property \Stripe\Service\Radar\RadarServiceFactory $radar
  * @property \Stripe\Service\RefundService $refunds

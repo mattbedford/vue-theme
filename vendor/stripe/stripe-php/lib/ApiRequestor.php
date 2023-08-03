@@ -106,22 +106,21 @@ class ApiRequestor
     }
 
     /**
-     * @param 'delete'|'get'|'post'     $method
+     * @param 'delete'|'get'|'post' $method
      * @param string     $url
      * @param null|array $params
      * @param null|array $headers
-     * @param 'preview'|'standard' $apiMode
      *
      * @throws Exception\ApiErrorException
      *
      * @return array tuple containing (ApiReponse, API key)
      */
-    public function request($method, $url, $params = null, $headers = null, $apiMode = 'standard')
+    public function request($method, $url, $params = null, $headers = null)
     {
         $params = $params ?: [];
         $headers = $headers ?: [];
         list($rbody, $rcode, $rheaders, $myApiKey) =
-        $this->_requestRaw($method, $url, $params, $headers, $apiMode);
+        $this->_requestRaw($method, $url, $params, $headers);
         $json = $this->_interpretResponse($rbody, $rcode, $rheaders);
         $resp = new ApiResponse($rbody, $rcode, $rheaders, $json);
 
@@ -129,22 +128,20 @@ class ApiRequestor
     }
 
     /**
-     * @param 'delete'|'get'|'post'     $method
+     * @param 'delete'|'get'|'post' $method
      * @param string     $url
      * @param callable $readBodyChunkCallable
      * @param null|array $params
      * @param null|array $headers
-     * @param 'preview'|'standard' $apiMode
-     * @param mixed $apiMode
      *
      * @throws Exception\ApiErrorException
      */
-    public function requestStream($method, $url, $readBodyChunkCallable, $params = null, $headers = null, $apiMode = 'standard')
+    public function requestStream($method, $url, $readBodyChunkCallable, $params = null, $headers = null)
     {
         $params = $params ?: [];
         $headers = $headers ?: [];
         list($rbody, $rcode, $rheaders, $myApiKey) =
-        $this->_requestRawStreaming($method, $url, $params, $headers, $readBodyChunkCallable, $apiMode);
+        $this->_requestRawStreaming($method, $url, $params, $headers, $readBodyChunkCallable);
         if ($rcode >= 300) {
             $this->_interpretResponse($rbody, $rcode, $rheaders);
         }
@@ -194,7 +191,7 @@ class ApiRequestor
      */
     private static function _specificAPIError($rbody, $rcode, $rheaders, $resp, $errorData)
     {
-        $msg = isset($errorData['message']) ? $errorData['message'] : (isset($errorData['developer_message']) ? $errorData['developer_message'] : null);
+        $msg = isset($errorData['message']) ? $errorData['message'] : null;
         $param = isset($errorData['param']) ? $errorData['param'] : null;
         $code = isset($errorData['code']) ? $errorData['code'] : null;
         $type = isset($errorData['type']) ? $errorData['type'] : null;
@@ -354,14 +351,7 @@ class ApiRequestor
         ];
     }
 
-    /**
-     * @param 'delete'|'get'|'post' $method
-     * @param string $url
-     * @param array $params
-     * @param array $headers
-     * @param 'preview'|'standard' $apiMode
-     */
-    private function _prepareRequest($method, $url, $params, $headers, $apiMode)
+    private function _prepareRequest($method, $url, $params, $headers)
     {
         $myApiKey = $this->_apiKey;
         if (!$myApiKey) {
@@ -401,15 +391,10 @@ class ApiRequestor
         }
 
         $absUrl = $this->_apiBase . $url;
-        if ('standard' === $apiMode) {
-            $params = self::_encodeObjects($params);
-        }
+        $params = self::_encodeObjects($params);
         $defaultHeaders = $this->_defaultHeaders($myApiKey, $clientUAInfo);
-
-        if ('preview' === $apiMode && !isset($headers['Stripe-Version'])) {
-            $headers['Stripe-Version'] = \Stripe\Util\ApiVersion::PREVIEW;
-        } elseif (Stripe::$apiVersion) {
-            $headers['Stripe-Version'] = Stripe::$apiVersion;
+        if (Stripe::$apiVersion) {
+            $defaultHeaders['Stripe-Version'] = Stripe::$apiVersion;
         }
 
         if (Stripe::$accountId) {
@@ -432,12 +417,8 @@ class ApiRequestor
 
         if ($hasFile) {
             $defaultHeaders['Content-Type'] = 'multipart/form-data';
-        } elseif ('preview' === $apiMode) {
-            $defaultHeaders['Content-Type'] = 'application/json';
-        } elseif ('standard' === $apiMode) {
-            $defaultHeaders['Content-Type'] = 'application/x-www-form-urlencoded';
         } else {
-            throw new Exception\InvalidArgumentException('Unknown API mode: ' . $apiMode);
+            $defaultHeaders['Content-Type'] = 'application/x-www-form-urlencoded';
         }
 
         $combinedHeaders = \array_merge($defaultHeaders, $headers);
@@ -455,16 +436,15 @@ class ApiRequestor
      * @param string $url
      * @param array $params
      * @param array $headers
-     * @param 'preview'|'standard' $apiMode
      *
      * @throws Exception\AuthenticationException
      * @throws Exception\ApiConnectionException
      *
      * @return array
      */
-    private function _requestRaw($method, $url, $params, $headers, $apiMode)
+    private function _requestRaw($method, $url, $params, $headers)
     {
-        list($absUrl, $rawHeaders, $params, $hasFile, $myApiKey) = $this->_prepareRequest($method, $url, $params, $headers, $apiMode);
+        list($absUrl, $rawHeaders, $params, $hasFile, $myApiKey) = $this->_prepareRequest($method, $url, $params, $headers);
 
         $requestStartMs = Util\Util::currentTimeMillis();
 
@@ -473,8 +453,7 @@ class ApiRequestor
             $absUrl,
             $rawHeaders,
             $params,
-            $hasFile,
-            $apiMode
+            $hasFile
         );
 
         if (isset($rheaders['request-id'])
@@ -495,16 +474,15 @@ class ApiRequestor
      * @param array $params
      * @param array $headers
      * @param callable $readBodyChunkCallable
-     * @param 'preview'|'standard' $apiMode
      *
      * @throws Exception\AuthenticationException
      * @throws Exception\ApiConnectionException
      *
      * @return array
      */
-    private function _requestRawStreaming($method, $url, $params, $headers, $readBodyChunkCallable, $apiMode)
+    private function _requestRawStreaming($method, $url, $params, $headers, $readBodyChunkCallable)
     {
-        list($absUrl, $rawHeaders, $params, $hasFile, $myApiKey) = $this->_prepareRequest($method, $url, $params, $headers, $apiMode);
+        list($absUrl, $rawHeaders, $params, $hasFile, $myApiKey) = $this->_prepareRequest($method, $url, $params, $headers);
 
         $requestStartMs = Util\Util::currentTimeMillis();
 

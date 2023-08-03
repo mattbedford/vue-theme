@@ -39,6 +39,8 @@ class OrderFormSubmission {
     public function __construct($cart_items, $contact, $coupon_code){
 
         $this->error = false;
+        $this->registration_id = null;
+      
         $this->cart_items = $cart_items;
         $this->contact = $contact;
         $this->coupon_code = $coupon_code;
@@ -59,9 +61,10 @@ class OrderFormSubmission {
 
         // Do actual sending of report here
       	// Handle this as an entirely separate class, though...
-                
-        $this->handle_success();
         
+        if($this->payment_required === false) {
+        	$this->handle_success();
+        }
     }
 
 
@@ -122,8 +125,57 @@ class OrderFormSubmission {
 
     public function do_payment() {
 
-        // Process payment
+        // Doing an http request to stripe to get our checkout URL and pass along body data
+        // This can then be returned to front end, redirect to Stripe (safely)
+        // then finalize purchase if required
 
+        $global_opts = get_option('wporg_options');
+        $stripe_key = $global_opts['stripe_api_key'];
+
+        \Stripe\Stripe::setApiKey($stripe_key);
+    
+        header('Content-Type: application/json');
+        $domain = site_url();
+        $email = $this->contact['email_address'];
+        $amount = $this->get_order_value() * 100;
+            
+        $checkout_session = \Stripe\Checkout\Session::create([
+        'customer_email' => $email,
+        'invoice_creation' => ['enabled' => true],
+        'client_reference_id' => $this->registration_id,
+        'line_items' => [[
+            'price_data' => [
+                'currency' => 'chf',
+                'product_data' => [
+                'name' => "Dagorà reports ",
+                ],
+                'unit_amount' => $amount,
+            ],
+            'quantity' => 1,
+        ]],
+        'mode' => 'payment',
+        'success_url' => $domain . '/thank-you?&session_id={CHECKOUT_SESSION_ID}',
+        'cancel_url' => $domain . '/cart',
+        ]);
+    
+        $this->return_status = 'stripe';
+        $this->return_message = $checkout_session->url;
+
+        /*
+        ** TESTING **
+        $url = 'https://api.stripe.com/v1/checkout/sessions';
+        $args = array(
+            "method" => "POST",
+            "headers" => array(
+                "Authorization" => "Bearer $stripe_key",
+			    "Content-type" => "application/x-www-form-urlencoded"
+            ),
+            "body" => array(
+
+            ),
+        );
+        $response = wp_remote_request( $url, $args );
+        */
 
     }
 
@@ -217,9 +269,11 @@ class OrderFormSubmission {
         require_once('ContactValidation.php');
         require_once('HubspotHelpers.php');
         require_once('CouponValidation.php');
-        require_once(get_stylesheet_directory_uri() . '/vendor/autoload.php');
+        require_once(ABSPATH . 'wp-content/themes/dagora-reports-shop/vendor/autoload.php');
+        require_once(ABSPATH . 'wp-content/themes/dagora-reports-shop/vendor/stripe/stripe-php/init.php');
         
     }
 
 
 }
+

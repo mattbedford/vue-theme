@@ -11,7 +11,6 @@ namespace Stripe\Issuing;
  * @property string $object String representing the object's type. Objects of the same type share the same value.
  * @property string $brand The brand of the card.
  * @property null|string $cancellation_reason The reason why the card was canceled.
- * @property null|string|\Stripe\Issuing\CardDesign $card_design The card design object belonging to this card.
  * @property \Stripe\Issuing\Cardholder $cardholder <p>An Issuing <code>Cardholder</code> object represents an individual or business entity who is <a href="https://stripe.com/docs/issuing">issued</a> cards.</p><p>Related guide: <a href="https://stripe.com/docs/issuing/cards#create-cardholder">How to create a cardholder</a></p>
  * @property int $created Time at which the object was created. Measured in seconds since the Unix epoch.
  * @property string $currency Three-letter <a href="https://www.iso.org/iso-4217-currency-codes.html">ISO currency code</a>, in lowercase. Supported currencies are <code>usd</code> in the US, <code>eur</code> in the EU, and <code>gbp</code> in the UK.
@@ -40,4 +39,20 @@ class Card extends \Stripe\ApiResource
     use \Stripe\ApiOperations\Create;
     use \Stripe\ApiOperations\Retrieve;
     use \Stripe\ApiOperations\Update;
+
+    const CANCELLATION_REASON_DESIGN_REJECTED = 'design_rejected';
+    const CANCELLATION_REASON_LOST = 'lost';
+    const CANCELLATION_REASON_STOLEN = 'stolen';
+
+    const REPLACEMENT_REASON_DAMAGED = 'damaged';
+    const REPLACEMENT_REASON_EXPIRED = 'expired';
+    const REPLACEMENT_REASON_LOST = 'lost';
+    const REPLACEMENT_REASON_STOLEN = 'stolen';
+
+    const STATUS_ACTIVE = 'active';
+    const STATUS_CANCELED = 'canceled';
+    const STATUS_INACTIVE = 'inactive';
+
+    const TYPE_PHYSICAL = 'physical';
+    const TYPE_VIRTUAL = 'virtual';
 }

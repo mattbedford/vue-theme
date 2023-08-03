@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit6959d38b20f184359f0670ae83bbce22
+class ComposerStaticInit42995233bdd0ac38f0c45e94537c1d2b
 {
     public static $files = array (
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
@@ -18,6 +18,7 @@ class ComposerStaticInit6959d38b20f184359f0670ae83bbce22
         array (
             'Stripe\\' => 7,
             'SevenShores\\Hubspot\\' => 20,
+            'SendinBlue\\Client\\' => 18,
         ),
         'P' => 
         array (
@@ -30,10 +31,6 @@ class ComposerStaticInit6959d38b20f184359f0670ae83bbce22
             'GuzzleHttp\\Promise\\' => 19,
             'GuzzleHttp\\' => 11,
         ),
-        'B' => 
-        array (
-            'Brevo\\Client\\' => 13,
-        ),
     );
 
     public static $prefixDirsPsr4 = array (
@@ -45,10 +42,14 @@ class ComposerStaticInit6959d38b20f184359f0670ae83bbce22
         array (
             0 => __DIR__ . '/..' . '/hubspot/hubspot-php/src',
         ),
+        'SendinBlue\\Client\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/sendinblue/api-v3-sdk/lib',
+        ),
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-message/src',
-            1 => __DIR__ . '/..' . '/psr/http-factory/src',
+            0 => __DIR__ . '/..' . '/psr/http-factory/src',
+            1 => __DIR__ . '/..' . '/psr/http-message/src',
         ),
         'Psr\\Http\\Client\\' => 
         array (
@@ -66,10 +67,6 @@ class ComposerStaticInit6959d38b20f184359f0670ae83bbce22
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/guzzle/src',
         ),
-        'Brevo\\Client\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/getbrevo/brevo-php/lib',
-        ),
     );
 
     public static $classMap = array (
@@ -79,9 +76,9 @@ class ComposerStaticInit6959d38b20f184359f0670ae83bbce22
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit6959d38b20f184359f0670ae83bbce22::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit6959d38b20f184359f0670ae83bbce22::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit6959d38b20f184359f0670ae83bbce22::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit42995233bdd0ac38f0c45e94537c1d2b::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit42995233bdd0ac38f0c45e94537c1d2b::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit42995233bdd0ac38f0c45e94537c1d2b::$classMap;
 
         }, null, ClassLoader::class);
     }

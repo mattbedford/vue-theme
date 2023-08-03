@@ -87,9 +87,6 @@ class ErrorObject extends StripeObject
     const CODE_DEBIT_NOT_AUTHORIZED = 'debit_not_authorized';
     const CODE_EMAIL_INVALID = 'email_invalid';
     const CODE_EXPIRED_CARD = 'expired_card';
-    const CODE_GIFT_CARD_BALANCE_INSUFFICIENT = 'gift_card_balance_insufficient';
-    const CODE_GIFT_CARD_CODE_EXISTS = 'gift_card_code_exists';
-    const CODE_GIFT_CARD_INACTIVE = 'gift_card_inactive';
     const CODE_IDEMPOTENCY_KEY_IN_USE = 'idempotency_key_in_use';
     const CODE_INCORRECT_ADDRESS = 'incorrect_address';
     const CODE_INCORRECT_CVC = 'incorrect_cvc';
@@ -178,7 +175,6 @@ class ErrorObject extends StripeObject
     const CODE_RETURN_INTENT_ALREADY_PROCESSED = 'return_intent_already_processed';
     const CODE_ROUTING_NUMBER_INVALID = 'routing_number_invalid';
     const CODE_SECRET_KEY_REQUIRED = 'secret_key_required';
-    const CODE_SENSITIVE_DATA_ACCESS_EXPIRED = 'sensitive_data_access_expired';
     const CODE_SEPA_UNSUPPORTED_ACCOUNT = 'sepa_unsupported_account';
     const CODE_SETUP_ATTEMPT_FAILED = 'setup_attempt_failed';
     const CODE_SETUP_INTENT_AUTHENTICATION_FAILURE = 'setup_intent_authentication_failure';

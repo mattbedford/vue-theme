@@ -2,10 +2,9 @@
     <div class="page-wrap">
         <section class="section1">
             <div class="col col1">
-                <h1>Thank you!</h1>
-                <p>Your order was submitted successfully and your reports will be sent to the email address you provided within a few minutes.</p>
-                <p>Please remember to check your spam folder and if you have any issues at all, feel free to reach out to us at info@dagora.ch</p>
-                <p>Thank you for trusting our reports.</p>
+                <h1>{{ page.headline1 }}</h1>
+                <div v-html="page.textarea1"></div>
+                <div v-html="page.textarea2"></div>
             </div>
             <div class="col col2">
                 <div class="order-details-wrap">
@@ -42,9 +41,18 @@ export default {
         return {
             ref: null,
             order: [],
+            page: {
+                headline1: '',
+                textarea1: '',
+                headline2: '',
+                textarea2: null,
+                cta: '',
+                externalLink: null,
+            },
         }
     },
     mounted() {
+        this.getPage();
         if(this.$root.ref) {
             this.ref = this.$root.ref;
             this.getOrderSummary();
@@ -73,7 +81,19 @@ export default {
                 .then((result) => { 
                     this.order = result;
                 });
-        }
+        },
+        getPage: async function() {
+            const url = `${this.rest_base}get-page`;
+            const data = { slug: 'thank-you' };
+            const headers = {
+                credentials: "same-origin",
+                "Content-Type": "application/json",
+                "X-WP-Nonce": this.nonce,
+            };
+            fetch(url, { method: "POST", headers, body: JSON.stringify(data) })
+                .then((result) => result.json())
+                .then((result) => { this.page = result; });
+        },
     }
 }
 

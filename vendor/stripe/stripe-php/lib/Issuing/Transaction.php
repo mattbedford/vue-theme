@@ -27,7 +27,6 @@ namespace Stripe\Issuing;
  * @property string $merchant_currency The currency with which the merchant is taking payment.
  * @property \Stripe\StripeObject $merchant_data
  * @property \Stripe\StripeObject $metadata Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach to an object. This can be useful for storing additional information about the object in a structured format.
- * @property null|\Stripe\StripeObject $network_data Details about the transaction, such as processing dates, set by the card network.
  * @property null|\Stripe\StripeObject $purchase_details Additional purchase information that is optionally provided by the merchant.
  * @property null|\Stripe\StripeObject $treasury <a href="https://stripe.com/docs/api/treasury">Treasury</a> details related to this transaction if it was created on a [FinancialAccount](/docs/api/treasury/financial_accounts
  * @property string $type The nature of the transaction.
@@ -40,4 +39,11 @@ class Transaction extends \Stripe\ApiResource
     use \Stripe\ApiOperations\All;
     use \Stripe\ApiOperations\Retrieve;
     use \Stripe\ApiOperations\Update;
+
+    const TYPE_CAPTURE = 'capture';
+    const TYPE_REFUND = 'refund';
+
+    const WALLET_APPLE_PAY = 'apple_pay';
+    const WALLET_GOOGLE_PAY = 'google_pay';
+    const WALLET_SAMSUNG_PAY = 'samsung_pay';
 }

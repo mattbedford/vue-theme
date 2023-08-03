@@ -9,11 +9,9 @@
           <span>Consumer</span>
           <span>Home & living</span>
         </div>
-        <h1>Dagorà Reports eShop</h1>
-        <p>Get access to the latest data and studies as well as quantitative and qualitative reports across a range of lifestyle industries and verticals.
-          Reports can be purchased individually or accessed freely by Dagorà Community Associates.
-        </p>
-        <a href="#reports-section" class="btn">Explore Reports</a>
+        <h1>{{ page.headline1 }}</h1>
+        <div v-html="page.textarea1"></div>
+        <a href="#reports-section" class="btn">{{ page.cta }}</a>
       </div>
 
       <div class="col col2">
@@ -24,13 +22,15 @@
     </section>
     <section class="section2" id="reports-section">
       <div class="container">
-        <h2 class="section-title">The Dagorà Reports</h2>
+        <h2 class="section-title">{{ page.headline2 }}</h2>
         <div class="list-reports">
           <div class="report" v-for="report in reports" :key="report.id">
-            <div class="report-img">
-              <span class="home-report-price" v-html="calcCHF(report.price)"></span>
-              <img :src="report.cover_image" alt="">
-            </div>
+            <router-link :to="{name: 'report' , params:{ slug: report.slug }}">
+              <div class="report-img">
+                <span class="home-report-price" v-html="calcCHF(report.price)"></span>
+                <img :src="report.cover_image" alt="">
+              </div>
+            </router-link>
             <div class="report-content">
               <h3>{{ report.title }}</h3>
               <p>{{ report.short_desc }}</p>
@@ -53,6 +53,16 @@ export default {
 
   data() {
     return {
+      page: {
+        headline1: '',
+        textarea1: '',
+        image1: '',
+        headline2: '',
+        textarea2: null,
+        image2: '',
+        cta: '',
+        externalLink: null,
+      },
       videos: [
         '/wp-content/uploads/bgr1.mp4',
         '/wp-content/uploads/bgr2.mp4',
@@ -70,6 +80,7 @@ export default {
     }
   },
   mounted() {
+    this.getPage();
     this.getReports();
   },
   methods: {
@@ -84,6 +95,18 @@ export default {
       fetch(url, { method: 'GET', headers })
         .then((result) => result.json())
         .then((result) => { this.reports = result; });
+    },
+    async getPage() {
+      const url = `${this.rest_base}get-page`;
+      const data = { slug: 'home' };
+      const headers = {
+        credentials: 'same-origin',
+        'Content-Type': 'application/json',
+        'X-WP-Nonce': this.nonce,
+      };
+      fetch(url, { method: 'POST', headers, body: JSON.stringify(data) })
+        .then((result) => result.json())
+        .then((result) => { this.page = result; });
     },
     addToCart(reportId) {
       this.$emit('addToCart', reportId);

@@ -18,6 +18,18 @@ add_action('rest_api_init', function () {
   });
 
 
+// Take a slug and return its corresponding page data - site_url()/wp-json/core-vue/get-page
+add_action('rest_api_init', function () {
+    register_rest_route( 'core-vue', '/get-page',array(
+        'methods'  => 'POST',
+        'callback' => 'return_single_page',
+        'permission_callback' => function() {
+            return true;
+        }
+    ));
+  });
+
+
 // Return previews of the array of items in the cart when hitting cart/checkout page - site_url()/wp-json/core-vue/cart
 add_action('rest_api_init', function () {
     register_rest_route( 'core-vue', '/cart',array(
@@ -97,6 +109,30 @@ function return_reports_data() {
 }
 
 
+function return_single_page( $request ) {
+
+    $slug = (string) $request['slug'];
+    $post_obj = get_page_by_path($slug, OBJECT, 'page');
+
+    $return_object = array(
+        'id' => $post_obj->ID,
+        'slug' => $slug,
+        'title' => get_the_title($post_obj->ID),
+        'headline1' => get_field('headline1', $post_obj->ID),
+        'headline2' => get_field('headline2', $post_obj->ID),
+        'image1'    => get_field('image1', $post_obj->ID),
+        'textarea1' => get_field('textarea1', $post_obj->ID),
+        'textarea2' => get_field('textarea2', $post_obj->ID),
+        'image2'    => get_field('image2', $post_obj->ID),
+        'cta' => get_field('cta', $post_obj->ID),
+        'externalLink' => get_field('externalLink', $post_obj->ID),
+    );
+
+    return $return_object;
+
+}
+
+
 function return_single_report( $request ) {
     
     $slug = (string) $request['slug'];
@@ -152,19 +188,12 @@ function do_order_form_submission($raw_data) {
 
     include_once(ABSPATH . 'wp-content/themes/dagora-reports-shop/classes/OrderFormSubmission.php');
     $order = new OrderFormSubmission($data['cartItems'], $data['contact'], $data['coupon_code']);
-
-    if($order->return_status === 'success') {
-        return array(
-            'status' => 'success',
-            'message' => 'Order successfully submitted',
-            'order_id' => $order->registration_id,
-        );
-    } else {
-        return array(
-            'status' => $order->return_status,
-            'message' => $order->return_message,
-        );
-    }
+  
+    return array(
+       'status' => $order->return_status,
+       'message' => $order->return_message,
+       'order_id' => $order->registration_id,
+    );
 
 }
 

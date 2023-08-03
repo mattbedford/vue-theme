@@ -35,3 +35,10 @@ function disable_404_redirection( $redirect_url ) {
     return $redirect_url;
 
 }
+
+
+// Remove standard WP description area on pages
+function remove_desc_area() {
+	remove_post_type_support( 'page', 'editor' );
+}
+add_action( 'init', 'remove_desc_area' );

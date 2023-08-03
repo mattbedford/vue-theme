@@ -29,7 +29,7 @@ export default {
     handleScroll: function (evt, el) {
       if(window.scrollY > 250) return;
       console.log(evt, el);
-      if (window.scrollY > 100) this.scrolledDown = true;
+      if (window.scrollY > 75) this.scrolledDown = true;
       else this.scrolledDown = false;
     },
     addItemToCart(reportId) {

@@ -71,6 +71,17 @@ html {
 	--accent-2: #7fc41c;
 	--message-0: #d53d3d;
   }
+  :root.dark-theme {
+	--base-0: #1e1e1e;
+	--base-1: #2d2d30;
+	--base-2: #2d2d30;
+	--contrast-1: #efefef;
+	--contrast-2: #efefef;
+	--contrast-3: #efefef;
+	--accent-1: #3f3f3f;
+	--accent-2: #3f3f3f;
+	--message-0: #d53d3d;
+  }
   
   #app {
 	  position:relative;
@@ -107,7 +118,7 @@ html {
 	  -webkit-transition:all 0.3s ease-in-out;
 	  transition:all 0.3s ease-in-out;
   }
-  .nav-logos,
+  .nav-logos > a,
   .nav-main,
   .nav-menu,
   .nav-cart {
@@ -145,7 +156,6 @@ html {
 	  margin-left:10px;
   }
   .nav-menu svg {
-	  fill:var(--base-0);
 	cursor:pointer;
   }
   .nav-cart {
@@ -163,6 +173,36 @@ html {
 	  color:var(--base-0);
   }
 
+/*Theme switcher*/
+.switch-checkbox {
+    display: none;
+  }
+  
+  .switch-label {
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    height: 2rem;
+    position: relative;
+    transition: background 0.5s ease;
+    justify-content: space-between;
+    width: 2rem;
+    z-index: 5;
+	left:10px;
+  }
+  .biggify {
+	width:25px !important;
+}
+  .switch-toggle {
+    position: absolute;
+    border-radius: 50%;
+    transform: translateX(0);
+    transition: transform 0.3s ease, background-color 0.5s ease;
+  }
+.nav-menu .switch-label svg {
+	width:20px;
+	color: var(--contrast-1);
+}
 /*Footer*/
 .footer {
 	position:absolute;
@@ -213,7 +253,10 @@ html {
 	  font-size:14px;
 	  margin-right:15px;
   }
-  
+  section > .col div p {
+	margin-bottom:1rem;
+}
+
   /*Global page layout helpers*/
   .page-wrap {
 	  min-height:100vh;
@@ -509,7 +552,6 @@ html {
 .tandcs {
 	font-size:13px;
 	max-width:80%;
-	padding:20px 0;
 }
 .intro, .nb {
 	max-width:80%;
@@ -533,7 +575,7 @@ html {
 	outline:none;
 }
 .submit-button {
-	width:45%;
+	width:200px;
 	border:none;
 	background:var(--accent-1);
 	color:var(--base-0);
@@ -573,6 +615,91 @@ select:-webkit-autofill:hover,
 select:-webkit-autofill:focus {
   -webkit-box-shadow: 0 0 0px 1000px var(--base-1) inset !important;
 }
+.form-section {
+	visibility:hidden;
+	height:0;
+	overflow:hidden;
+	-webkit-transition:all 0.3s ease-in-out;
+	transition:all 0.3s ease-in-out;
+}
+.form-section.active {
+	visibility:visible;
+	height:auto;
+	overflow:visible;
+	-webkit-transition:all 0.3s ease-in-out;
+	transition:all 0.3s ease-in-out;
+}
+.form-section button {
+	width:100px;
+	border:none;
+	background:var(--contrast-3);
+	color:var(--base-0);
+	display: inline-block;
+    margin: 10px 10px 10px 0;
+    padding: 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+    outline: none;
+    border: none;
+}
+.form-indicator {
+	display:flex;
+}
+.form-indicator-item {
+	width:15px;
+	height:15px;
+	background:var(--accent-2);
+	margin:0 5px;
+	border-radius:100px;
+	opacity:0.4
+}
+.form-indicator-item.active {
+	opacity:1;	
+}
+
+.announce {
+	display:flex;
+	flex-wrap:wrap;
+	position:fixed;
+	align-items:center;
+	bottom:30px;
+	right:30px;
+	padding:20px 40px;
+	z-index:99;
+	background:var(--base-0);
+	width:90%;
+	max-width:500px;
+	border-radius:5px;
+	border-top:2px solid var(--message-0);
+	   box-shadow: 0 1px 1px rgba(0,0,0,0.08), 
+                0 2px 2px rgba(0,0,0,0.12), 
+                0 4px 4px rgba(0,0,0,0.16), 
+                0 8px 8px rgba(0,0,0,0.20);
+}
+.announce .warning {
+	max-width:30px;
+	color:var(--message-0);
+	fill:var(--message-0);
+	flex:0 1 10%;
+}
+.announce h3 {
+	color:var(--message-0);
+	text-transform:capitalize;
+	flex:0 1 90%;
+	padding-left:15px;
+}
+.announce p {
+	flex:0 1 100%;
+}
+.announce span:first-of-type {
+	position:absolute;
+	top:20px;
+	right:20px;
+	cursor:pointer;
+	padding:10px;
+}
 
 /*Thank you summary page*/
 .order-details-wrap {
@@ -594,3 +721,19 @@ select:-webkit-autofill:focus {
 .order-summary-list {
 	margin-top:10px;
 }
+
+/*About*/
+.page-image {
+	border-radius:5px;
+	width:100%;
+}
+@supports (object-fit:cover) {
+  .page-image {
+		object-fit:cover;
+	    object-position:left center;
+  }
+  section.stretch .col img {
+	min-height:40vw;
+  }
+}
+

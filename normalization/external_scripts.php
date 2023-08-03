@@ -50,20 +50,11 @@ function get_vue() {
 		true
 	);
 
-	// Single extra page scripts (only on staging) - probably not needed since refactor of about page import (w/ no chunks)
-	wp_register_script( // ABOUT PAGE
-		'vue_app_about',
-		$app_root . 'about.js',
-		array(),
-		false,
-		true
-	);
-	wp_enqueue_script('vue_app_about');
-
-
+	
 	wp_enqueue_script('vue_app');
 	wp_enqueue_script('vue_chunks');
 	wp_enqueue_script( 'rest_api_vars' );
 
 }
 add_action('wp_enqueue_scripts', 'get_vue');
+

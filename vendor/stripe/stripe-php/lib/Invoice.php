@@ -49,7 +49,6 @@ namespace Stripe;
  * @property int $amount_shipping This is the sum of all the shipping amounts.
  * @property null|string|\Stripe\StripeObject $application ID of the Connect Application that created the invoice.
  * @property null|int $application_fee_amount The fee in %s that will be applied to the invoice and transferred to the application owner's Stripe account when the invoice is paid.
- * @property null|\Stripe\StripeObject $applies_to
  * @property int $attempt_count Number of payment attempts made for this invoice, from the perspective of the payment retry schedule. Any payment attempt counts as the first attempt, and subsequently only automatic retries increment the attempt count. In other words, manual payment attempts after the first attempt do not affect the retry schedule.
  * @property bool $attempted Whether an attempt has been made to pay the invoice. An invoice is not attempted until 1 hour after the <code>invoice.created</code> webhook, for example, so you might not want to display that invoice as unpaid to your users.
  * @property null|bool $auto_advance Controls whether Stripe performs <a href="https://stripe.com/docs/invoicing/integration/automatic-advancement-collection">automatic collection</a> of the invoice. If <code>false</code>, the invoice's state doesn't automatically advance without an explicit action.
@@ -107,7 +106,6 @@ namespace Stripe;
  * @property null|string $status The status of the invoice, one of <code>draft</code>, <code>open</code>, <code>paid</code>, <code>uncollectible</code>, or <code>void</code>. <a href="https://stripe.com/docs/billing/invoices/workflow#workflow-overview">Learn more</a>
  * @property \Stripe\StripeObject $status_transitions
  * @property null|string|\Stripe\Subscription $subscription The subscription that this invoice was prepared for, if any.
- * @property null|\Stripe\StripeObject $subscription_details Details about the subscription that created this invoice.
  * @property null|int $subscription_proration_date Only set for upcoming invoices that preview prorations. The time used to calculate prorations.
  * @property int $subtotal Total of all subscriptions, invoice items, and prorations on the invoice before any invoice level discount or exclusive tax is applied. Item discounts are already incorporated
  * @property null|int $subtotal_excluding_tax The integer amount in %s representing the subtotal of the invoice before any invoice level discount or tax is applied. Item discounts are already incorporated
@@ -133,9 +131,6 @@ class Invoice extends ApiResource
     use ApiOperations\Search;
     use ApiOperations\Update;
 
-    const BILLING_CHARGE_AUTOMATICALLY = 'charge_automatically';
-    const BILLING_SEND_INVOICE = 'send_invoice';
-
     const BILLING_REASON_AUTOMATIC_PENDING_INVOICE_ITEM_INVOICE = 'automatic_pending_invoice_item_invoice';
     const BILLING_REASON_MANUAL = 'manual';
     const BILLING_REASON_QUOTE_ACCEPT = 'quote_accept';
@@ -149,13 +144,21 @@ class Invoice extends ApiResource
     const COLLECTION_METHOD_CHARGE_AUTOMATICALLY = 'charge_automatically';
     const COLLECTION_METHOD_SEND_INVOICE = 'send_invoice';
 
-    /** @deprecated */
-    const STATUS_DELETED = 'deleted';
+    const CUSTOMER_TAX_EXEMPT_EXEMPT = 'exempt';
+    const CUSTOMER_TAX_EXEMPT_NONE = 'none';
+    const CUSTOMER_TAX_EXEMPT_REVERSE = 'reverse';
+
     const STATUS_DRAFT = 'draft';
     const STATUS_OPEN = 'open';
     const STATUS_PAID = 'paid';
     const STATUS_UNCOLLECTIBLE = 'uncollectible';
     const STATUS_VOID = 'void';
+
+    const BILLING_CHARGE_AUTOMATICALLY = 'charge_automatically';
+    const BILLING_SEND_INVOICE = 'send_invoice';
+
+    /** @deprecated */
+    const STATUS_DELETED = 'deleted';
 
     /**
      * @param null|array $params
@@ -249,7 +252,7 @@ class Invoice extends ApiResource
      *
      * @throws \Stripe\Exception\ApiErrorException if the request fails
      *
-     * @return \Stripe\Collection<\Stripe\InvoiceLineItem> list of InvoiceLineItems
+     * @return \Stripe\Collection<\Stripe\InvoiceLineItem> list of invoice line items
      */
     public static function upcomingLines($params = null, $opts = null)
     {
@@ -284,7 +287,7 @@ class Invoice extends ApiResource
      *
      * @throws \Stripe\Exception\ApiErrorException if the request fails
      *
-     * @return \Stripe\SearchResult<Invoice> the invoice search results
+     * @return \Stripe\SearchResult<\Stripe\Invoice> the invoice search results
      */
     public static function search($params = null, $opts = null)
     {

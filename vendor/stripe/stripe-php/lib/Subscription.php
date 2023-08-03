@@ -32,7 +32,6 @@ namespace Stripe;
  * @property null|\Stripe\TaxRate[] $default_tax_rates The tax rates that will apply to any subscription item that does not have <code>tax_rates</code> set. Invoices created will have their <code>default_tax_rates</code> populated from the subscription.
  * @property null|string $description The subscription's description, meant to be displayable to the customer. Use this field to optionally store an explanation of the subscription for rendering in Stripe surfaces.
  * @property null|\Stripe\Discount $discount Describes the current discount applied to this subscription, if there is one. When billing, a discount applied to a subscription overrides a discount applied on a customer-wide basis.
- * @property null|(string|\Stripe\Discount)[] $discounts The discounts applied to the subscription. Subscription item discounts are applied before subscription discounts. Use <code>expand[]=discounts</code> to expand each discount.
  * @property null|int $ended_at If the subscription has ended, the date the subscription ended.
  * @property \Stripe\Collection<\Stripe\SubscriptionItem> $items List of subscription items, each with an attached price.
  * @property null|string|\Stripe\Invoice $latest_invoice The most recent invoice this subscription has generated.
@@ -45,7 +44,6 @@ namespace Stripe;
  * @property null|\Stripe\StripeObject $pending_invoice_item_interval Specifies an interval for how often to bill for any pending invoice items. It is analogous to calling <a href="https://stripe.com/docs/api#create_invoice">Create an invoice</a> for the given subscription at the specified interval.
  * @property null|string|\Stripe\SetupIntent $pending_setup_intent You can use this <a href="https://stripe.com/docs/api/setup_intents">SetupIntent</a> to collect user authentication when creating a subscription without immediate payment or updating a subscription's payment method, allowing you to optimize for off-session payments. Learn more in the <a href="https://stripe.com/docs/billing/migration/strong-customer-authentication#scenario-2">SCA Migration Guide</a>.
  * @property null|\Stripe\StripeObject $pending_update If specified, <a href="https://stripe.com/docs/billing/subscriptions/pending-updates">pending updates</a> that will be applied to the subscription once the <code>latest_invoice</code> has been paid.
- * @property null|\Stripe\StripeObject $prebilling Time period and invoice for a Subscription billed in advance.
  * @property null|string|\Stripe\SubscriptionSchedule $schedule The schedule attached to the subscription
  * @property int $start_date Date when the subscription was first created. The date might differ from the <code>created</code> date due to backdating.
  * @property string $status <p>Possible values are <code>incomplete</code>, <code>incomplete_expired</code>, <code>trialing</code>, <code>active</code>, <code>past_due</code>, <code>canceled</code>, or <code>unpaid</code>.</p><p>For <code>collection_method=charge_automatically</code> a subscription moves into <code>incomplete</code> if the initial payment attempt fails. A subscription in this state can only have metadata and default_source updated. Once the first invoice is paid, the subscription moves into an <code>active</code> state. If the first invoice is not paid within 23 hours, the subscription transitions to <code>incomplete_expired</code>. This is a terminal state, the open invoice will be voided and no further invoices will be generated.</p><p>A subscription that is currently in a trial period is <code>trialing</code> and moves to <code>active</code> when the trial period is over.</p><p>If subscription <code>collection_method=charge_automatically</code>, it becomes <code>past_due</code> when payment is required but cannot be paid (due to failed payment or awaiting additional user actions). Once Stripe has exhausted all payment retry attempts, the subscription will become <code>canceled</code> or <code>unpaid</code> (depending on your subscriptions settings).</p><p>If subscription <code>collection_method=send_invoice</code> it becomes <code>past_due</code> when its invoice is not paid by the due date, and <code>canceled</code> or <code>unpaid</code> if it is still not paid by an additional deadline after that. Note that when a subscription has a status of <code>unpaid</code>, no subsequent invoices will be attempted (invoices will be created, but then immediately automatically closed). After receiving updated payment information from a customer, you may choose to reopen and pay their closed invoices.</p>
@@ -65,14 +63,8 @@ class Subscription extends ApiResource
     use ApiOperations\Search;
     use ApiOperations\Update;
 
-    const PAYMENT_BEHAVIOR_ALLOW_INCOMPLETE = 'allow_incomplete';
-    const PAYMENT_BEHAVIOR_DEFAULT_INCOMPLETE = 'default_incomplete';
-    const PAYMENT_BEHAVIOR_ERROR_IF_INCOMPLETE = 'error_if_incomplete';
-    const PAYMENT_BEHAVIOR_PENDING_IF_INCOMPLETE = 'pending_if_incomplete';
-
-    const PRORATION_BEHAVIOR_ALWAYS_INVOICE = 'always_invoice';
-    const PRORATION_BEHAVIOR_CREATE_PRORATIONS = 'create_prorations';
-    const PRORATION_BEHAVIOR_NONE = 'none';
+    const COLLECTION_METHOD_CHARGE_AUTOMATICALLY = 'charge_automatically';
+    const COLLECTION_METHOD_SEND_INVOICE = 'send_invoice';
 
     const STATUS_ACTIVE = 'active';
     const STATUS_CANCELED = 'canceled';
@@ -116,6 +108,15 @@ class Subscription extends ApiResource
         return $this;
     }
 
+    const PAYMENT_BEHAVIOR_ALLOW_INCOMPLETE = 'allow_incomplete';
+    const PAYMENT_BEHAVIOR_DEFAULT_INCOMPLETE = 'default_incomplete';
+    const PAYMENT_BEHAVIOR_ERROR_IF_INCOMPLETE = 'error_if_incomplete';
+    const PAYMENT_BEHAVIOR_PENDING_IF_INCOMPLETE = 'pending_if_incomplete';
+
+    const PRORATION_BEHAVIOR_ALWAYS_INVOICE = 'always_invoice';
+    const PRORATION_BEHAVIOR_CREATE_PRORATIONS = 'create_prorations';
+    const PRORATION_BEHAVIOR_NONE = 'none';
+
     /**
      * @param null|array $params
      * @param null|array|string $opts
@@ -156,7 +157,7 @@ class Subscription extends ApiResource
      *
      * @throws \Stripe\Exception\ApiErrorException if the request fails
      *
-     * @return \Stripe\SearchResult<Subscription> the subscription search results
+     * @return \Stripe\SearchResult<\Stripe\Subscription> the subscription search results
      */
     public static function search($params = null, $opts = null)
     {

@@ -32,6 +32,13 @@ class Reader extends \Stripe\ApiResource
     use \Stripe\ApiOperations\Retrieve;
     use \Stripe\ApiOperations\Update;
 
+    const DEVICE_TYPE_BBPOS_CHIPPER2X = 'bbpos_chipper2x';
+    const DEVICE_TYPE_BBPOS_WISEPAD3 = 'bbpos_wisepad3';
+    const DEVICE_TYPE_BBPOS_WISEPOS_E = 'bbpos_wisepos_e';
+    const DEVICE_TYPE_SIMULATED_WISEPOS_E = 'simulated_wisepos_e';
+    const DEVICE_TYPE_STRIPE_M2 = 'stripe_m2';
+    const DEVICE_TYPE_VERIFONE_P400 = 'verifone_P400';
+
     /**
      * @param null|array $params
      * @param null|array|string $opts
@@ -43,57 +50,6 @@ class Reader extends \Stripe\ApiResource
     public function cancelAction($params = null, $opts = null)
     {
         $url = $this->instanceUrl() . '/cancel_action';
-        list($response, $opts) = $this->_request('post', $url, $params, $opts);
-        $this->refreshFrom($response, $opts);
-
-        return $this;
-    }
-
-    /**
-     * @param null|array $params
-     * @param null|array|string $opts
-     *
-     * @throws \Stripe\Exception\ApiErrorException if the request fails
-     *
-     * @return \Stripe\Terminal\Reader the collected reader
-     */
-    public function collectInputs($params = null, $opts = null)
-    {
-        $url = $this->instanceUrl() . '/collect_inputs';
-        list($response, $opts) = $this->_request('post', $url, $params, $opts);
-        $this->refreshFrom($response, $opts);
-
-        return $this;
-    }
-
-    /**
-     * @param null|array $params
-     * @param null|array|string $opts
-     *
-     * @throws \Stripe\Exception\ApiErrorException if the request fails
-     *
-     * @return \Stripe\Terminal\Reader the collected reader
-     */
-    public function collectPaymentMethod($params = null, $opts = null)
-    {
-        $url = $this->instanceUrl() . '/collect_payment_method';
-        list($response, $opts) = $this->_request('post', $url, $params, $opts);
-        $this->refreshFrom($response, $opts);
-
-        return $this;
-    }
-
-    /**
-     * @param null|array $params
-     * @param null|array|string $opts
-     *
-     * @throws \Stripe\Exception\ApiErrorException if the request fails
-     *
-     * @return \Stripe\Terminal\Reader the confirmed reader
-     */
-    public function confirmPaymentIntent($params = null, $opts = null)
-    {
-        $url = $this->instanceUrl() . '/confirm_payment_intent';
         list($response, $opts) = $this->_request('post', $url, $params, $opts);
         $this->refreshFrom($response, $opts);
 

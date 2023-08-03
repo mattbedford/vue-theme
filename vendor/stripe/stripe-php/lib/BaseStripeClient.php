@@ -13,14 +13,22 @@ class BaseStripeClient implements StripeClientInterface, StripeStreamingClientIn
     /** @var string default base URL for Stripe's Files API */
     const DEFAULT_FILES_BASE = 'https://files.stripe.com';
 
+    /** @var array<string, null|string> */
+    const DEFAULT_CONFIG = [
+        'api_key' => null,
+        'client_id' => null,
+        'stripe_account' => null,
+        'stripe_version' => null,
+        'api_base' => self::DEFAULT_API_BASE,
+        'connect_base' => self::DEFAULT_CONNECT_BASE,
+        'files_base' => self::DEFAULT_FILES_BASE,
+    ];
+
     /** @var array<string, mixed> */
     private $config;
 
     /** @var \Stripe\Util\RequestOptions */
     private $defaultOpts;
-
-    /** @var \Stripe\Preview */
-    public $preview;
 
     /**
      * Initializes a new instance of the {@link BaseStripeClient} class.
@@ -58,7 +66,7 @@ class BaseStripeClient implements StripeClientInterface, StripeStreamingClientIn
             throw new \Stripe\Exception\InvalidArgumentException('$config must be a string or an array');
         }
 
-        $config = \array_merge($this->getDefaultConfig(), $config);
+        $config = \array_merge(self::DEFAULT_CONFIG, $config);
         $this->validateConfig($config);
 
         $this->config = $config;
@@ -67,8 +75,6 @@ class BaseStripeClient implements StripeClientInterface, StripeStreamingClientIn
             'stripe_account' => $config['stripe_account'],
             'stripe_version' => $config['stripe_version'],
         ]);
-
-        $this->preview = new Preview($this);
     }
 
     /**
@@ -142,47 +148,6 @@ class BaseStripeClient implements StripeClientInterface, StripeStreamingClientIn
         $obj->setLastResponse($response);
 
         return $obj;
-    }
-
-    /**
-     * Sends a raw request to Stripe's API. This is the lowest level method for interacting
-     * with the Stripe API. This method is useful for interacting with endpoints that are not
-     * covered yet in stripe-php.
-     *
-     * @param 'delete'|'get'|'post' $method the HTTP method
-     * @param string $path the path of the request
-     * @param null|array $params the parameters of the request
-     * @param array $opts the special modifiers of the request
-     *
-     * @return \Stripe\ApiResponse
-     */
-    public function rawRequest($method, $path, $params = null, $opts = [])
-    {
-        if ('post' !== $method && null !== $params) {
-            throw new Exception\InvalidArgumentException('Error: rawRequest only supports $params on post requests. Please pass null and add your parameters to $path');
-        }
-        $apiMode = 'standard';
-        $headers = [];
-        if (\is_array($opts) && \array_key_exists('api_mode', $opts)) {
-            $apiMode = $opts['api_mode'];
-            unset($opts['api_mode']);
-        }
-        if (\is_array($opts) && \array_key_exists('headers', $opts)) {
-            $headers = $opts['headers'] ?: [];
-            unset($opts['headers']);
-        }
-        if (\is_array($opts) && \array_key_exists('stripe_context', $opts)) {
-            $headers['Stripe-Context'] = $opts['stripe_context'];
-            unset($opts['stripe_context']);
-        }
-        $opts = $this->defaultOpts->merge($opts, true);
-        // Concatenate $headers to $opts->headers, removing duplicates.
-        $opts->headers = \array_merge($opts->headers, $headers);
-        $baseUrl = $opts->apiBase ?: $this->getApiBase();
-        $requestor = new \Stripe\ApiRequestor($this->apiKeyForRequest($opts), $baseUrl);
-        list($response) = $requestor->request($method, $path, $params, $opts->headers, $apiMode);
-
-        return $response;
     }
 
     /**
@@ -275,24 +240,6 @@ class BaseStripeClient implements StripeClientInterface, StripeStreamingClientIn
     }
 
     /**
-     * TODO: replace this with a private constant when we drop support for PHP < 5.
-     *
-     * @return array<string, mixed>
-     */
-    private function getDefaultConfig()
-    {
-        return [
-            'api_key' => null,
-            'client_id' => null,
-            'stripe_account' => null,
-            'stripe_version' => null,
-            'api_base' => self::DEFAULT_API_BASE,
-            'connect_base' => self::DEFAULT_CONNECT_BASE,
-            'files_base' => self::DEFAULT_FILES_BASE,
-        ];
-    }
-
-    /**
      * @param array<string, mixed> $config
      *
      * @throws \Stripe\Exception\InvalidArgumentException
@@ -347,24 +294,12 @@ class BaseStripeClient implements StripeClientInterface, StripeStreamingClientIn
         }
 
         // check absence of extra keys
-        $extraConfigKeys = \array_diff(\array_keys($config), \array_keys($this->getDefaultConfig()));
+        $extraConfigKeys = \array_diff(\array_keys($config), \array_keys(self::DEFAULT_CONFIG));
         if (!empty($extraConfigKeys)) {
             // Wrap in single quote to more easily catch trailing spaces errors
             $invalidKeys = "'" . \implode("', '", $extraConfigKeys) . "'";
 
             throw new \Stripe\Exception\InvalidArgumentException('Found unknown key(s) in configuration array: ' . $invalidKeys);
         }
-    }
-
-    /**
-     * Deserializes the raw JSON string returned by rawRequest into a similar class.
-     *
-     * @param string $json
-     *
-     * @return \Stripe\StripeObject
-     * */
-    public function deserialize($json)
-    {
-        return \Stripe\Util\Util::convertToStripeObject(\json_decode($json, true), []);
     }
 }
