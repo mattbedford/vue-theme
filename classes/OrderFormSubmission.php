@@ -53,11 +53,11 @@ class OrderFormSubmission {
 
         if($this->error === true) return;
         
+        $this->save_order();
+
         if($this->payment_required === true){
             $this->do_payment();
         }
-
-        $this->save_order();
 
         // Do actual sending of report here
       	// Handle this as an entirely separate class, though...

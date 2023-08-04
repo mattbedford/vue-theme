@@ -10,7 +10,7 @@
                         <li v-for="(item, index) in downloadables" :key="index" v-html="item.name" @click="unencryptDownload(item.url, item.name)"></li>
                     </ul>
                 </div>
-                <div class="results-box error" v-if="error">
+                <div class="results-box error" v-if="error[0] == 'error'">
                     <h3>Error</h3>
                     <span v-html="error[1]"></span>
                 </div>
@@ -127,7 +127,7 @@ export default {
             fetch(url, { method: "POST", headers, body: JSON.stringify(data) })
                 .then((result) => result.json())
                 .then((result) => { 
-                    if(result.status === 'success') {
+                    if(result[0] === 'success') {
                         this.downloadFiles();
                     } else {
                         this.doCriticalError();
