@@ -154,7 +154,7 @@ class OrderFormSubmission {
             'quantity' => 1,
         ]],
         'mode' => 'payment',
-        'success_url' => $domain . '/thank-you?&session_id={CHECKOUT_SESSION_ID}',
+        'success_url' => $domain . '/thank-you?&session={CHECKOUT_SESSION_ID}&order=' . $this->registration_id,
         'cancel_url' => $domain . '/cart',
         ]);
     
@@ -216,9 +216,17 @@ class OrderFormSubmission {
 
     public function do_coupon() {
 
+        // Automatic approval for testing while on staging
+        $domain = site_url();
+        $on_staging = strpos($domain, '.local');
+        if($on_staging !== false){
+            $this->payment_required = false; // Can be set to FALSE for testing
+            return;
+        }
+
         if(empty($this->coupon_code)){
             $this->coupon_code = false; 
-            $this->payment_required = true; // Can be set to FALSE for testing
+            $this->payment_required = true;
             return;
         }
                 
@@ -270,7 +278,7 @@ class OrderFormSubmission {
         require_once('HubspotHelpers.php');
         require_once('CouponValidation.php');
         require_once(ABSPATH . 'wp-content/themes/dagora-reports-shop/vendor/autoload.php');
-        require_once(ABSPATH . 'wp-content/themes/dagora-reports-shop/vendor/stripe/stripe-php/init.php');
+        //require_once(ABSPATH . 'wp-content/themes/dagora-reports-shop/vendor/stripe/stripe-php/init.php');
         
     }
 

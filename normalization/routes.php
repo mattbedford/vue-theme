@@ -77,6 +77,30 @@ add_action('rest_api_init', function () {
     ));
   });
 
+
+// Receive Stripe session ID and vaildate it - site_url()/wp-json/core-vue/stripe-check
+add_action('rest_api_init', function () {
+    register_rest_route( 'core-vue', '/stripe-check',array(
+        'methods'  => 'POST',
+        'callback' => 'vaildate_stripe_session_id',
+        'permission_callback' => function() {
+            return true;
+        }
+    ));
+  });
+
+
+// Receive order reference and provide files to download - site_url()/wp-json/core-vue/download-files
+add_action('rest_api_init', function () {
+    register_rest_route( 'core-vue', '/download-files',array(
+        'methods'  => 'POST',
+        'callback' => 'provide_files_downloads',
+        'permission_callback' => function() {
+            return true;
+        }
+    ));
+  });
+
 /*********************************************************
  * 
  * 	DOING ROUTE CALLBACKS
@@ -236,5 +260,97 @@ function send_report_summary($raw_data) {
     );
 
     return $return_value;
+
+}
+
+
+function vaildate_stripe_session_id($raw_data) {
+
+    $data = $raw_data->get_json_params();
+
+    $session_id = $data['session_id'];
+    $order_id = $data['order_id'];
+
+    if(empty($session_id)) return array("error", "No session ID provided");
+
+    require_once(ABSPATH . 'wp-content/themes/dagora-reports-shop/vendor/autoload.php');
+    $global_opts = get_option('wporg_options');
+    $stripe_key = $global_opts['stripe_api_key'];
+
+    $stripe = new \Stripe\StripeClient( $stripe_key );
+
+    $stripe_sesh = $stripe->checkout->sessions->retrieve(
+        $session_id,
+        []
+    );
+
+    if(empty($stripe_sesh) || !isset($stripe_sesh)) {
+		//Could not find a stripe checkout session with this identifier
+		return array("error", "Sorry. We could find no record of this transaction.");
+	}
+
+    if($stripe_sesh->payment_status !== 'paid') { 
+        // Payment was not successful
+        return array("error", "Sorry. It seems your payment was not processed correctly. Please try again."); 
+    }
+
+	// Session ID does in fact relate to current db order ID
+	if ($stripe_sesh->client_reference_id == $order_id) {
+        
+        $order_id = intval($order_id);
+
+        global $wpdb;
+        $table = $wpdb->prefix . 'orders';
+        $chk = $wpdb->query( $wpdb->prepare( 
+            "
+                UPDATE $table
+                SET payment_status = 'paid'
+                WHERE id = %d",
+            $order_id ) );
+
+        return array('success', 'Order confirmed!');
+
+    }
+
+    // If all else fails...
+    return array("error", "Sorry. Your order could not be confirmed."); 
+
+}
+
+
+function provide_files_downloads($raw_data) {
+
+    $data = $raw_data->get_json_params();
+    $order_id = $data['ref'];
+    $method = $data['method'];
+    $checksum = $data['check'];
+
+    if(empty($order_id) || empty($method) || empty($checksum)) return array("error", "One or more security checks failed. Please check the url and try again");
+
+    //get order data from db
+    global $wpdb;
+    $table = $wpdb->prefix . 'orders';
+    $order = $wpdb->get_row("SELECT * FROM $table WHERE id = $order_id");
+
+    if(empty($order)) return array("Error", "Order not found");
+
+    //check security
+    if($method === 'coupon' && $order->coupon_code !== $checksum) return array("error", "Coupon security check failed.");
+    if($method === 'stripe' && $order->payment_status !== 'paid') return array("error", "Stripe security check failed.");
+
+    $report_ids = unserialize($order->report_ids);
+
+    $return_array = array();
+    foreach($report_ids as $single_report_id) {
+
+        $url = get_field('full_report', $single_report_id);
+        $name = get_the_title($single_report_id);
+        $return_array[] = array(
+            'name' => $name,
+            'url' => base64_encode($url),
+        );
+    } 
+
+    return $return_array;
 
 }

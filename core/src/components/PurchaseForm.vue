@@ -141,7 +141,7 @@ export default {
                 if(result.status === 'success') {
                     this.$root.inCart = [];
                     this.$root.ref = result.order_id;
-                    this.$router.push({ name: 'thank-you' });
+                    this.$router.push({ name: 'thank-you', query: { order: result.order_id, coupon: this.coupon_code } });
                 }
                 if(result.status === 'error') {
                     this.announce.status = result.status;

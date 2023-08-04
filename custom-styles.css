@@ -2,7 +2,7 @@
 
 a, * {
 	text-decoration:none !important;
-	color:inherit;
+	color:var(--contrast-2);
 	outline:none;
 }
 html {
@@ -64,6 +64,7 @@ html {
 	--base-0: #ffffff;
 	--base-1: #ededed;
 	--base-2: #f4f4f4;
+	--base-3: #3a3a3a;
 	--contrast-1: #3a3a3a;
 	--contrast-2: #555555;
 	--contrast-3: #bdbdbd;
@@ -75,9 +76,10 @@ html {
 	--base-0: #1e1e1e;
 	--base-1: #2d2d30;
 	--base-2: #2d2d30;
+	--base-3: #efefef;
 	--contrast-1: #efefef;
 	--contrast-2: #efefef;
-	--contrast-3: #efefef;
+	--contrast-3: #3f3f3f;
 	--accent-1: #3f3f3f;
 	--accent-2: #3f3f3f;
 	--message-0: #d53d3d;
@@ -108,11 +110,11 @@ html {
 	  z-index:99;
 	  -webkit-transition:all 0.3s ease-in-out;
 	  transition:all 0.3s ease-in-out;
-  }
+	 }
   .nav-main,
   .nav-cart {
 	  padding:25px;
-	  border:1px solid var(--contrast-3);
+	  border:1px solid var(--base-2);
 	  border-radius:5px;
 	  background:var(--base-0);
 	  -webkit-transition:all 0.3s ease-in-out;
@@ -129,6 +131,9 @@ html {
 	  align-items:center;
 	  text-decoration:none;
   }
+.dark-theme .nav-logos {
+	filter:contrast(0%) grayscale(1) brightness(5);
+}
   nav img {
 	  height:30px;
 	  margin-right:15px;
@@ -170,9 +175,14 @@ html {
 	  align-items:center;
 	  justify-content:center;
 	  border-radius:100px;
-	  color:var(--base-0);
+	  color:var(--base-3);
   }
-
+nav.active {
+	background:var(--base-0);
+}
+.dark-theme nav.active {
+	background:var(--base-0);
+}
 /*Theme switcher*/
 .switch-checkbox {
     display: none;
@@ -219,10 +229,13 @@ html {
 	justify-content:space-between;
 	max-width:1200px;
 	margin:0 auto;
-	padding:20px 0;
+	padding:20px 20px 0 20px;
 }
 
 /*Globals*/
+  .dark-theme img {
+	  filter:brightness(0.85) !important;
+  }
   .btn {
 	  display:inline-block;
 	  margin:10px 10px 10px 0;
@@ -238,15 +251,18 @@ html {
   button.btn.bad,
   .btn.bad {
 	background-color:var(--message-0);
-	color:var(--base-0);
-  }	
+	color:var(--base-3);
+  }
+  .dark-theme .btn {
+	  color:var(--base-1);
+  }
   .tags {
 	  display:flex;
 	  max-width:100%;
 	  justify-content:flex-start;
   }
   .tags span {
-	  color:var(--base-1);
+	  color:var(--base-3);
 	  background:var(--accent-2);
 	  padding:2px 10px;
 	  border-radius:15px;
@@ -260,11 +276,11 @@ html {
   /*Global page layout helpers*/
   .page-wrap {
 	  min-height:100vh;
-	  min-height:100dvh;
+	  min-height: 120dvh;
 	  max-width:1200px;
 	  margin:0 auto;
 	  justify-content:space-between;
-  }
+	 }
   .page-wrap:not(.home.page-wrap) {
 	padding-top:100px;
   }
@@ -327,22 +343,23 @@ html {
 	  top:0;
 	  left:0;
 	  width:100vw;
-	  height:90px;
+	  height:80px;
 	  z-index:98;
 	  -webkit-transition:all 0.3s ease-in-out;
 	  transition:all 0.3s ease-in-out;
-  }
+	 }
   .navbackground.active {
-	  background:white;
+	  background:var(--base-0);
 	  -webkit-transition:all 0.3s ease-in-out;
 	  transition:all 0.3s ease-in-out;
 	  box-shadow:0 3px 12px rgba(0,0,0,0.2);
   }
   nav.active {
-	  top:10px;
+	  top:0px;
 	  -webkit-transition:all 0.3s ease-in-out;
 	  transition:all 0.3s ease-in-out;
-  }
+	  /* margin-bottom: -20px; */
+	 }
   nav.active .nav-main,
   nav.active .nav-cart {
 	  border:none;
@@ -377,8 +394,8 @@ html {
 	  bottom:0;
   }
   .report-content .btn {
-	  background:var(--base-0);
-  
+	  background:var(--contrast-3);
+	  color:var(--base-3);
   }
   .report-content button.btn {
 	  background: var(--contrast-2);
@@ -386,6 +403,7 @@ html {
   }
   .report-content button.btn.bad {
 	background-color:var(--message-0);
+	color:#efefef;
   }	
 
 .report-img {
@@ -437,9 +455,16 @@ html {
 	padding:4px;
 	margin:10px 0;
 	background:var(--accent-1);
-	color:var(--base-0);
+	color: var(--base-3);
+}
+.single-report .description {
+	font-family: 'Roboto', sans-serif;
+	font-weight:300;
 }
 
+.dark-theme .navbackground.active {
+	background:var(--base-0) !important;
+}
 
 /*cart page*/
 .cart section {
@@ -633,7 +658,7 @@ select:-webkit-autofill:focus {
 	width:100px;
 	border:none;
 	background:var(--contrast-3);
-	color:var(--base-0);
+	color:var(--base-3);
 	display: inline-block;
     margin: 10px 10px 10px 0;
     padding: 10px;
@@ -737,3 +762,7 @@ select:-webkit-autofill:focus {
   }
 }
 
+/*Fixes*/
+.dark-theme .home .section1 .btn {
+	color:var(--base-3);
+}
