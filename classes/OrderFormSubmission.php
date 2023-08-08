@@ -53,8 +53,13 @@ class OrderFormSubmission {
 
         if($this->error === true) return;
         
-        $this->save_order();
-
+		$this->save_order();
+		
+		$hubspot_status = HubspotHelpers::hubspotExistsHandler($this->contact);
+		if(!empty($hubspot_status)) {
+			$this->update_with_hubspot_status($hubspot_status);
+		}
+		
         if($this->payment_required === true){
             $this->do_payment();
         }
@@ -67,6 +72,20 @@ class OrderFormSubmission {
         }
     }
 
+	
+	public function update_with_hubspot_status($status) {
+			
+		global $wpdb;
+        $table = $wpdb->prefix . 'orders';
+        $chk = $wpdb->query( $wpdb->prepare( 
+            "
+                UPDATE $table
+                SET hubspot_status = %s
+                WHERE id = %d",
+            strval($status), intval($this->registration_id )) );
+	
+	}
+	
 
     public function handle_success() {
 
@@ -278,7 +297,6 @@ class OrderFormSubmission {
         require_once('HubspotHelpers.php');
         require_once('CouponValidation.php');
         require_once(ABSPATH . 'wp-content/themes/dagora-reports-shop/vendor/autoload.php');
-        //require_once(ABSPATH . 'wp-content/themes/dagora-reports-shop/vendor/stripe/stripe-php/init.php');
         
     }
 
