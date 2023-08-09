@@ -1,7 +1,8 @@
 <template>
     <div class="single-report page-wrap" :class="report.id">
         <section class="section1">
-            <div class="col col1">
+            <TeaserForm class="teaser-form" v-if="showForm" headline="Download this report for free" :reportName="report.title" :teaserId="report.id"></TeaserForm>
+            <div v-else class="col col1">
                 <img :src="report.cover_image">
             </div>
             <div class="col col2">
@@ -18,7 +19,10 @@
                 <div class="btns">
                     <button v-if="$root.inCart.includes(report.id)" class="btn bad" @click="removeFromCart(report.id)">Remove from cart</button>
                     <button v-else class="btn" @click="addToCart(report.id)">Add to cart</button>
-                    <a :href="report.teaser_file" download><button class="btn" v-if="report.teaser_file">Download preview</button></a>
+                    <button class="btn" v-if="report.teaser_file" @click="showForm = !showForm">
+                      <span v-if="!showForm">Download preview</span>
+                      <span v-else>&#x2715;</span>
+                    </button>
                 </div>
             </div>
         </section>
@@ -26,11 +30,17 @@
 </template>
 
 <script>
+import TeaserForm from '@/components/TeasrForm.vue';
+
 export default {
   name: 'SingleReportView',
+  components: {
+    TeaserForm,
+  },
 
   data() {
     return {
+      showForm: false,
       report: [],
     }
   },

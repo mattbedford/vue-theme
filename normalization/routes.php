@@ -101,6 +101,43 @@ add_action('rest_api_init', function () {
     ));
   });
 
+
+// Check Stripe has been paid and provide download url in a mail - site_url()/wp-json/core-vue/stripe-download-check
+add_action('rest_api_init', function () {
+    register_rest_route( 'core-vue', '/stripe-download-check',array(
+        'methods'  => 'POST',
+        'callback' => 'stripe_confirmation_and_email_send',
+        'permission_callback' => function() {
+            return true;
+        }
+    ));
+  });
+
+
+// Receive request to dl teaser file - site_url()/wp-json/core-vue/download-preview
+add_action('rest_api_init', function () {
+    register_rest_route( 'core-vue', '/download-preview',array(
+        'methods'  => 'POST',
+        'callback' => 'process_teaser_file_download',
+        'permission_callback' => function() {
+            return true;
+        }
+    ));
+  });
+
+
+// Actually send back teaser file - site_url()/wp-json/core-vue/teaser-file
+add_action('rest_api_init', function () {
+    register_rest_route( 'core-vue', '/teaser-file',array(
+        'methods'  => 'POST',
+        'callback' => 'return_downloadable_teaser_file',
+        'permission_callback' => function() {
+            return true;
+        }
+    ));
+  });
+
+
 /*********************************************************
  * 
  * 	DOING ROUTE CALLBACKS
@@ -293,6 +330,7 @@ function vaildate_stripe_session_id($raw_data) {
         // Payment was not successful
         return array("error", "Sorry. It seems your payment was not processed correctly. Please try again."); 
     }
+   
 
 	// Session ID does in fact relate to current db order ID
 	if ($stripe_sesh->client_reference_id == $order_id) {
@@ -353,4 +391,82 @@ function provide_files_downloads($raw_data) {
 
     return $return_array;
 
+}
+
+// Validates request, sends email to user with correct link to access downloadables
+function process_teaser_file_download($raw_data) {
+    
+    $data = $raw_data->get_json_params();
+
+    include_once(ABSPATH . 'wp-content/themes/dagora-reports-shop/classes/TeaserFormSubmission.php');
+    $order = new TeaserFormSubmission($data['teaser'], $data['contact']);
+  
+    return array(
+       'status' => $order->return_status,
+       'message' => $order->return_message, 
+       'order_id' => $order->registration_id,
+    );
+
+}
+
+// When teaser requester lands on thank you page, it trggers this to check all OK and send back the downloadable file
+function return_downloadable_teaser_file($raw_data) {
+
+    $data = $raw_data->get_json_params();
+    $report_id = $data['ref'];
+    $method = $data['method']; // "teaser"
+    $checksum = $data['check']; //email address of requester
+
+    if(empty($order_id) || empty($method) || empty($checksum)) return array("error", "One or more security checks failed. Please check the url and try again");
+
+    //get order data from db
+    global $wpdb;
+    $table = $wpdb->prefix . 'orders';
+    $order = $wpdb->get_row("SELECT * FROM $table WHERE id = $order_id");
+
+    if(empty($order)) return array("Error", "Order not found");
+
+    //check security
+    if($method !== 'teaser') return array("error", "Something went wrong with your dowload. Please try again later.");
+    if($order->email_address !== $checksum) return array("error", "Email address security check failed. Please try again later.");
+    
+    if(!is_numeric($report_id) || 'publish' !== get_post_status($report_id)) return array("error", "Report not found.");
+
+    $return_array = array();
+    
+    $url = get_field('teaser', $report_id);
+    $name = get_the_title($report_id) . " - preview";
+
+    $return_array[] = array(
+        'name' => $name,
+        'url' => base64_encode($url),
+    ); 
+
+    return $return_array;
+}
+
+
+
+function stripe_confirmation_and_email_send($raw_data) {
+
+
+    $data = $raw_data->get_json_params();
+
+    $email = $data['email'];
+    $stripe_session = $data['session_id'];
+
+    global $wpdb;
+    $table = $wpdb->prefix . 'orders';
+    $order = $wpdb->get_row("SELECT * FROM $table WHERE session_id = '$stripe_session'");
+
+    if(!empty($order) && $order->email_address == $email) {
+
+        // Create download url
+        $domain = site_url();
+        $url = $domain . '/thank-you?session=' . $stripe_session . '&id=' . $order->id;
+        
+        require_once('MailerTool.php');
+        new MailerTool($email, $order->first_name, $order->last_name, 'report', $url);
+       
+    }
 }

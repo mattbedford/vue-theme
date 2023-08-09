@@ -57,9 +57,7 @@
                 <button type="button" @click="currForm = 1">Back</button>
                 <input type="submit" value="Get your reports" @click.prevent="handleSubmission()" :disabled="formIsNotValid" class="submit-button btn">
             </div>
-            <label class="code-box"><span>Do you have a code for free access? Enter it here.</span>
-                <input type="text" name="coupon_code" v-model="coupon_code">
-            </label>
+            
             <div class="form-indicator">
                 <div class="form-indicator-item" :class="{'active': currForm === 0}" @click="currForm = 0"></div>
                 <div class="form-indicator-item" :class="{'active': currForm === 1}" @click="currForm = 1"></div>
@@ -82,11 +80,13 @@ export default {
     name: 'SingleReportView',
     props: {
         headline: String,
-        textarea: String,
+        teaserId: Number,
+        reportName: String,
     },
 
   data() {
     return {
+      textarea: `<p>Enter your details below to download the preview of the ${this.reportName} free of charge.</p>`,
       currForm: 0,
       announce: {
         status: null,
@@ -101,7 +101,6 @@ export default {
         job_title: '',
       },
       terms: false,
-      coupon_code: '',
       honeypot: '',
     }
   },
@@ -124,11 +123,10 @@ export default {
         || !this.contact.email_address || !this.contact.company_name 
         || !this.contact.company_type || !this.terms) return;
       
-        const url = `${this.rest_base}order-submission`;
+        const url = `${this.rest_base}download-preview`;
         const data = {
             contact: this.contact,
-            coupon_code: this.coupon_code,
-            cartItems: this.$root.inCart,
+            teaser: this.teaserId,
         };
         const headers = {
             credentials: "same-origin",
@@ -139,17 +137,11 @@ export default {
             .then((result) => result.json())
             .then((result) => { 
                 if(result.status === 'success') {
-                    this.$root.inCart = [];
-                    this.$root.ref = result.order_id;
                     this.$router.push({ name: 'success'});
-                    //this.$router.push({ name: 'thank-you', query: { order: result.order_id, coupon: this.coupon_code } });
                 }
                 if(result.status === 'error') {
                     this.announce.status = result.status;
                     this.announce.message = result.message;
-                }
-                if(result.status === 'stripe') {
-                    window.location.href = result.message;
                 }
              });
     },

@@ -5,6 +5,7 @@ import ReportView from '../views/SingleReportView.vue'
 import CartView from '../views/CartView.vue'
 import ThankYouView from '../views/ThankYouView.vue'
 import AboutView from '../views/AboutView.vue'
+import SuccessPreDownload from '../views/SuccessPreDownload.vue'
 
 
 Vue.use(VueRouter)
@@ -34,6 +35,11 @@ const routes = [
     path: '/thank-you',
     name: 'thank-you',
     component: ThankYouView
+  },
+  {
+    path: '/success',
+    name: 'success',
+    component: SuccessPreDownload
   },
 ]
 

@@ -78,6 +78,11 @@ export default {
             this.session = this.$route.query.session;
             this.method = 'stripe';
         }
+        if(this.$route.query.teaser) { /*requires a url query string with email and teaser_id*/
+            this.ref = this.$route.query.teaser;
+            this.session = this.$route.query.email;
+            this.method = 'teaser';
+        }
         this.getPage();
         this.getOrderSummary();
     },
@@ -108,6 +113,10 @@ export default {
 
                     if(this.method === 'stripe') {
                         this.doStripeCheck();
+                    }
+
+                    if(this.method === 'teaser') {
+                        this.getTeaserFile();
                     }
 
                 });
@@ -168,6 +177,25 @@ export default {
                 .then((result) => { 
                     if(Array.isArray(result) && result[0] !== 'error') {
                         this.downloadables = result;
+                    } else {
+                        this.doCriticalError(result);
+                    }
+                });
+        },
+        getTeaserFile: async function() {
+            const url = `${this.rest_base}teaser-file`;
+            const check = this.session;
+            const data = { ref: this.ref, method: this.method, check: check };
+            const headers = {
+                credentials: "same-origin",
+                "Content-Type": "application/json",
+                "X-WP-Nonce": this.nonce,
+            };
+            fetch(url, { method: "POST", headers, body: JSON.stringify(data) })
+                .then((result) => result.json())
+                .then((result) => { 
+                    if(Array.isArray(result) && result[0] !== 'error') {
+                        this.downloadables = result[1];
                     } else {
                         this.doCriticalError(result);
                     }

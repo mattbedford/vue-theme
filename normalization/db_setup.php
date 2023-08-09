@@ -31,6 +31,7 @@ function create_dagora_reports_database_table() {
 		report_ids text,
         report_names text,
 		hubspot_status text,
+		session_id text,
 		reports_delivered tinyint(1) DEFAULT '0' NOT NULL,
 		PRIMARY KEY  (id)
 	) $charset_collate;";

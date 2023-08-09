@@ -466,6 +466,18 @@ nav.active {
 	background:var(--base-0) !important;
 }
 
+.single-report .teaser-form {
+	border:2px dashed var(--contrast-3);
+	padding:40px;
+	min-height:65vh;
+	min-height:65dvh;
+	border-radius:5px;
+}
+.single-report .teaser-form .nb,
+.single-report .teaser-form sup {
+	color:var(--message-0);
+}
+
 /*cart page*/
 .cart section {
 	align-items:flex-start;

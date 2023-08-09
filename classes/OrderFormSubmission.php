@@ -27,6 +27,7 @@ if(!defined('ABSPATH')){
 class OrderFormSubmission {
 
     public $error;
+    public $checkout_session_id;
     public $cart_items;
     public $contact;
     public $coupon_code;
@@ -68,6 +69,10 @@ class OrderFormSubmission {
       	// Handle this as an entirely separate class, though...
         
         if($this->payment_required === false) {
+            $url = $this->create_downloads_url();
+
+            require_once('MailerTool.php');
+            new MailerTool($this->contact['email_address'], $this->contact['first_name'], $this->contact['last_name'], 'full', $url);
         	$this->handle_success();
         }
     }
@@ -89,8 +94,7 @@ class OrderFormSubmission {
 
     public function handle_success() {
 
-        //Send report to user via email
-        //$this->update_hubspot(); MAYBE... not sure yet
+        
         $this->return_status = 'success';
         $this->return_message = 'Your order has been successfully received. Please check your email for your download link.';
 
@@ -173,28 +177,23 @@ class OrderFormSubmission {
             'quantity' => 1,
         ]],
         'mode' => 'payment',
-        'success_url' => $domain . '/thank-you?&session={CHECKOUT_SESSION_ID}&order=' . $this->registration_id,
+        'success_url' => $domain . '/success?&session={CHECKOUT_SESSION_ID}&email=' . $this->contact['email_address'],
         'cancel_url' => $domain . '/cart',
         ]);
     
         $this->return_status = 'stripe';
         $this->return_message = $checkout_session->url;
+        $this->checkout_session_id = $checkout_session->id;
 
-        /*
-        ** TESTING **
-        $url = 'https://api.stripe.com/v1/checkout/sessions';
-        $args = array(
-            "method" => "POST",
-            "headers" => array(
-                "Authorization" => "Bearer $stripe_key",
-			    "Content-type" => "application/x-www-form-urlencoded"
-            ),
-            "body" => array(
-
-            ),
-        );
-        $response = wp_remote_request( $url, $args );
-        */
+        global $wpdb;
+        $table = $wpdb->prefix . 'orders';
+        $chk = $wpdb->query( $wpdb->prepare( 
+            "
+                UPDATE $table
+                SET session_id = %s
+                WHERE id = %d",
+            $this->$checkout_session_id, $this->registration_id ) );
+        
 
     }
 
@@ -286,6 +285,14 @@ class OrderFormSubmission {
         }
 
         return rtrim($order_items, ', ');
+
+    }
+
+    public function create_downloads_url() {
+
+        $domain = site_url();
+        $url = $domain . '/thank-you?order=' . $this->registration_id . '&coupon=' . $this->coupon_code;
+        return $url;
 
     }
 
