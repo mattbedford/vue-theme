@@ -163,19 +163,6 @@ class TeaserFormSubmission {
     }
 
 
-    public function get_order_items() {
-
-        $order_items = '';
-
-        foreach($this->cart_items as $item){
-            $order_items .= get_the_title($item) . ', ';
-        }
-
-        return rtrim($order_items, ', ');
-
-    }
-
-
     private function do_teaser_email_send() {
 
         $url = $this->create_teaser_download_url();
@@ -190,7 +177,7 @@ class TeaserFormSubmission {
     public function create_teaser_download_url() {
 
         $domain = site_url();
-        $url = $domain . '/thank-you?teaser=' . $this->teaser_id;
+        $url = $domain . '/thank-you?preview=' . $this->registration_id . '&email=' . $this->contact['email_address'];
         return $url;
 
     }

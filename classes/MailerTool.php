@@ -61,15 +61,7 @@ class MailerTool {
             	<div><img style="width:100%;height:auto;" src="https://eluxurysummit.ch/wp-content/uploads/LINKEDIN_EVENT2.webp"><br></div>
             	<div>
                 	<h2>Dear $this->recipient_fname </h2>
-                	<p>Thank you for registering for e-Luxury 2023. You will receive your official ticket/badge directly at the event at check-in.</p> 
-					<div style="background:#efefef;padding:20px;text-align:center;margin:30px auto;border-right:20px solid #d2bd8e">
-						<h3>Location</h3>
-						<p><strong>IMD Business School</strong></p>
-						<p>Lausanne | Switzerland</p>
-
-						<a style="color:#d2bd8e;text-decoration:none;" href="https://goo.gl/maps/Q3sXRkBY6E8tcFeS8"><p>Get directions here</p></a><br>
-						<a style="display:inline-block;text-decoration:none;background:#d2bd8e;color:white;padding:8px 20px;" href="https://e-sustainability.ch/">Discover the event</a><br>
-				</div>
+                    <p>Your link to download the reports is here: $this->downloads_url</p>
                 <p>If you have any questions, feel free to contact us: <a href="mailto:operations@dagora.ch">operations@dagora.ch</a></p>
                 <p><em>The Dagorà team</em></p>
             </div>

@@ -27,6 +27,7 @@ if(!defined('ABSPATH')){
 class OrderFormSubmission {
 
     public $error;
+    public $on_staging;
     public $checkout_session_id;
     public $cart_items;
     public $contact;
@@ -38,6 +39,9 @@ class OrderFormSubmission {
 
 
     public function __construct($cart_items, $contact, $coupon_code){
+
+        $domain = site_url();
+	    $this->on_staging = strpos($domain, '.local');
 
         $this->error = false;
         $this->registration_id = null;
@@ -56,10 +60,14 @@ class OrderFormSubmission {
         
 		$this->save_order();
 		
-		$hubspot_status = HubspotHelpers::hubspotExistsHandler($this->contact);
-		if(!empty($hubspot_status)) {
-			$this->update_with_hubspot_status($hubspot_status);
-		}
+        if($this->on_staging === false) {
+            $hubspot_status = HubspotHelpers::hubspotExistsHandler($this->contact);
+            if(!empty($hubspot_status)) {
+                $this->update_with_hubspot_status($hubspot_status);
+            }
+        } else {
+            $this->update_with_hubspot_status('staging');
+        }
 		
         if($this->payment_required === true){
             $this->do_payment();
@@ -235,10 +243,8 @@ class OrderFormSubmission {
     public function do_coupon() {
 
         // Automatic approval for testing while on staging
-        $domain = site_url();
-        $on_staging = strpos($domain, '.local');
-        if($on_staging !== false){
-            $this->payment_required = false; // Can be set to FALSE for testing
+        if($this->on_staging !== false){
+            $this->payment_required = false;
             return;
         }
 

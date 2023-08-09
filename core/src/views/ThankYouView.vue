@@ -5,12 +5,12 @@
                 <h1 class="section-title">{{ page.headline1 }}</h1>
                 <div v-html="page.textarea1"></div>
                 <div v-html="page.textarea2"></div>
-                <div class="results-box all-ok" v-if="downloadables">
+                <div class="results-box all-ok" v-if="!errorFlag">
                     <ul>
                         <li v-for="(item, index) in downloadables" :key="index" v-html="item.name" @click="unencryptDownload(item.url, item.name)"></li>
                     </ul>
                 </div>
-                <div class="results-box error" v-if="error[0] == 'error'">
+                <div class="results-box error" v-else>
                     <h3>Error</h3>
                     <span v-html="error[1]"></span>
                 </div>
@@ -65,6 +65,7 @@ export default {
             },
             downloadables: [],
             error: [],
+            errorFlag: false,
         }
     },
     mounted() {
@@ -78,8 +79,8 @@ export default {
             this.session = this.$route.query.session;
             this.method = 'stripe';
         }
-        if(this.$route.query.teaser) { /*requires a url query string with email and teaser_id*/
-            this.ref = this.$route.query.teaser;
+        if(this.$route.query.preview) { /*requires a url query string with email and teaser_id*/
+            this.ref = this.$route.query.preview;
             this.session = this.$route.query.email;
             this.method = 'teaser';
         }
@@ -139,7 +140,7 @@ export default {
                     if(result[0] === 'success') {
                         this.downloadFiles();
                     } else {
-                        this.doCriticalError();
+                        this.doCriticalError(result);
                     }
                 });
         },
@@ -194,14 +195,15 @@ export default {
             fetch(url, { method: "POST", headers, body: JSON.stringify(data) })
                 .then((result) => result.json())
                 .then((result) => { 
-                    if(Array.isArray(result) && result[0] !== 'error') {
-                        this.downloadables = result[1];
-                    } else {
+                    if(Array.isArray(result) && result[0] === 'error') {
                         this.doCriticalError(result);
+                    } else {
+                        this.downloadables = result;
                     }
                 });
         },
         doCriticalError: function(err) {
+            this.errorFlag = true;
             this.error = err;
         },
         decode(s) {

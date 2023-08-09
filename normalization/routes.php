@@ -413,22 +413,24 @@ function process_teaser_file_download($raw_data) {
 function return_downloadable_teaser_file($raw_data) {
 
     $data = $raw_data->get_json_params();
-    $report_id = $data['ref'];
+    $registration_id = $data['ref'];
     $method = $data['method']; // "teaser"
     $checksum = $data['check']; //email address of requester
 
-    if(empty($order_id) || empty($method) || empty($checksum)) return array("error", "One or more security checks failed. Please check the url and try again");
+    if(empty($registration_id) || empty($method) || empty($checksum)) return array("error", "One or more security checks failed. Please check the url and try again");
 
-    //get order data from db
+    //get report ID data from db
     global $wpdb;
     $table = $wpdb->prefix . 'orders';
-    $order = $wpdb->get_row("SELECT * FROM $table WHERE id = $order_id");
+    $order = $wpdb->get_row("SELECT * FROM $table WHERE id = $registration_id");
 
     if(empty($order)) return array("Error", "Order not found");
 
     //check security
     if($method !== 'teaser') return array("error", "Something went wrong with your dowload. Please try again later.");
-    if($order->email_address !== $checksum) return array("error", "Email address security check failed. Please try again later.");
+    if($order->email !== $checksum) return array("error", "Email address security check failed. Please try again later.");
+
+    $report_id = $order->report_ids;
     
     if(!is_numeric($report_id) || 'publish' !== get_post_status($report_id)) return array("error", "Report not found.");
 
