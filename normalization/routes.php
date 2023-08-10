@@ -153,6 +153,12 @@ function return_reports_data() {
     ]);
 
     foreach($reports_list as $single) {
+
+        $terms = get_the_terms($single, 'post_tag');
+        $tags = array_map(function($term) {
+            return $term->slug;
+        }, $terms);
+
         $report_objects[] = array(
             'id' => $single,
             'slug' => get_post_field('post_name', $single),
@@ -162,6 +168,7 @@ function return_reports_data() {
             'price' => get_field('price', $single),
             'release_date' => get_field('release_date', $single),
             'expiry_date' => get_field('expiry_date', $single),
+            'tags' => $tags,
         );
     }
 
@@ -278,6 +285,10 @@ function send_report_summary($raw_data) {
     $coupon_code_if_used = $order->coupon_code;
 
     if($payment_status === 'coupon') {
+        $payment_method = 'Coupon';
+        $coupon_code = $coupon_code_if_used;
+    }
+    elseif($payment_status === 'preview') {
         $payment_method = 'Coupon';
         $coupon_code = $coupon_code_if_used;
     } else {

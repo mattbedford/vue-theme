@@ -1,12 +1,12 @@
 <template>
-    <div class="page-wrap">
+    <div class="page-wrap success">
         <section class="section1">
             <div class="col col1">
                 <h1 class="section-title" v-html="page.headline1"></h1>
                 <p v-html="page.textarea1"></p>
                 <RouterLink to="/"><button class="btn">Go to home page</button></RouterLink>
             </div>
-            <div class="col col1">
+            <div class="col col2">
                 <img :src="page.image1" alt="Person celebrating after receiving his Dagorà report">
             </div>
         </section>

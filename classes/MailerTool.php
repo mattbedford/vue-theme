@@ -34,19 +34,19 @@ class MailerTool {
 
         switch ($this->message_type) {
             case 'report':
-                $message_body = $this->do_welcome_email();
+                $message_body = $this->do_purchase_email();
                 break;
 
             case 'teaser':
-                $message_body = $this->do_welcome_email();
+                $message_body = $this->do_teaser_email();
                 break;
             
             case 'coupon':
-                $message_body = $this->do_welcome_email();
+                $message_body = $this->do_coupon_email();
                 break;
 
             default:
-                $message_body = $this->do_welcome_email();
+                $message_body = $this->do_coupon_email();
                 break;
         }
         return $message_body;
@@ -54,18 +54,81 @@ class MailerTool {
     }
 
 
-    private function do_welcome_email() {
+    private function do_purchase_email() {
         $html_string = <<<END
             <html><body style="background:#efefef;padding:40px 20px;">
 			<div style="background:#ffffff;padding:3vw;width:92%; max-width:600px;margin:0 auto;">
-            	<div><img style="width:100%;height:auto;" src="https://eluxurysummit.ch/wp-content/uploads/LINKEDIN_EVENT2.webp"><br></div>
+            	<div><img style="width:auto;height:60px;" src="https://dagora-reports.hidora.com/wp-content/uploads/LOGO-DAGORA_NEW-300x91-1.png"><br></div>
             	<div>
                 	<h2>Dear $this->recipient_fname </h2>
-                    <p>Your link to download the reports is here: $this->downloads_url</p>
-                <p>If you have any questions, feel free to contact us: <a href="mailto:operations@dagora.ch">operations@dagora.ch</a></p>
-                <p><em>The Dagorà team</em></p>
+                    <p>Thank you for purchasing on the Dagorà Reports eShop. <strong>Your payment was preocessed correctly</strong>.</p>
+                    <div style="padding:20px;background:#efefef;">
+                        <p><a href='$this->downloads_url' target='_blank'>Click here</a> to access your reports on our website.</p>
+                    </div>
+                <p>If you have any issues or queries, please reach out to us at: <a href="mailto:info@dagora.ch">info@dagora.ch</a></p>
+                <p><em>The Dagorà team</em></p></br>
             </div>
-			<img style="width:100%;height:auto;" src="https://eluxurysummit.ch/wp-content/uploads/speakers-eluxury2023.jpg">
+            <div style="background:#0084cb;padding:40px 20px;color:white;">
+                <img style="width:auto;height:40px;" src="https://dagora-reports.hidora.com/wp-content/uploads/LOGO-DAGORA_W-300x63-1.png"><br>
+                <p style="color:white;">Dagorà brings together brands, tech companies, investors and start-ups for a stronger, more innovative LifestyleTech ecosystem.</p>
+                <p style="color:white;"><strong><a style="color:white;" href="https://community.dagora.ch/join-us">Join Dagorà today</a></strong> to get free access to all reports, events and community programmes
+                and to build your network in Switzerland and beyond.</p>
+            </div>
+			</div></body></html>
+END;
+    return $html_string;
+    
+    }
+
+
+    private function do_coupon_email() {
+        $html_string = <<<END
+            <html><body style="background:#efefef;padding:40px 20px;">
+			<div style="background:#ffffff;padding:3vw;width:92%; max-width:600px;margin:0 auto;">
+            	<div><img style="width:auto;height:60px;" src="https://dagora-reports.hidora.com/wp-content/uploads/LOGO-DAGORA_NEW-300x91-1.png"><br></div>
+            	<div>
+                	<h2>Dear $this->recipient_fname </h2>
+                    <p>Thank you for visiting the Dagorà Reports eShop. <strong>The reports you requested are now available</strong>.</p>
+                    <div style="padding:20px;background:#efefef;">
+                        <p><a href='$this->downloads_url' target='_blank'>Click here</a> to access your reports on our website.</p>
+                    </div>
+                <p>If you have any issues or queries, please reach out to us at: <a href="mailto:info@dagora.ch">info@dagora.ch</a></p>
+                <p><em>The Dagorà team</em></p></br>
+            </div>
+            <div style="background:#0084cb;padding:40px 20px;color:white;">
+                <img style="width:auto;height:40px;" src="https://dagora-reports.hidora.com/wp-content/uploads/LOGO-DAGORA_W-300x63-1.png"><br>
+                <p style="color:white;">Dagorà brings together brands, tech companies, investors and start-ups for a stronger, more innovative LifestyleTech ecosystem.</p>
+                <p style="color:white;"><strong><a style="color:white;" href="https://community.dagora.ch/join-us">Join Dagorà today</a></strong> to get free access to all reports, events and community programmes
+                and to build your network in Switzerland and beyond.</p>
+            </div>
+			</div></body></html>
+END;
+    return $html_string;
+    
+    }
+
+
+
+    private function do_teaser_email() {
+        $html_string = <<<END
+            <html><body style="background:#efefef;padding:40px 20px;">
+			<div style="background:#ffffff;padding:3vw;width:92%; max-width:600px;margin:0 auto;">
+            	<div><img style="width:auto;height:60px;" src="https://dagora-reports.hidora.com/wp-content/uploads/LOGO-DAGORA_NEW-300x91-1.png"><br></div>
+            	<div>
+                	<h2>Dear $this->recipient_fname </h2>
+                    <p>Thank you for visiting the Dagorà Reports eShop. <strong>Your preview resources are now available</strong>.</p>
+                    <div style="padding:20px;background:#efefef;">
+                        <p><a href='$this->downloads_url' target='_blank'>Click here</a> to access your reports on our website.</p>
+                    </div>
+                <p>If you have any issues or queries, please reach out to us at: <a href="mailto:info@dagora.ch">info@dagora.ch</a></p>
+                <p><em>The Dagorà team</em></p></br>
+            </div>
+            <div style="background:#0084cb;padding:40px 20px;color:white;">
+                <img style="width:auto;height:40px;" src="https://dagora-reports.hidora.com/wp-content/uploads/LOGO-DAGORA_W-300x63-1.png"><br>
+                <p style="color:white;">Dagorà brings together brands, tech companies, investors and start-ups for a stronger, more innovative LifestyleTech ecosystem.</p>
+                <p style="color:white;"><strong><a style="color:white;" href="https://community.dagora.ch/join-us">Join Dagorà today</a></strong> to get free access to all reports, events and community programmes
+                and to build your network in Switzerland and beyond.</p>
+            </div>
 			</div></body></html>
 END;
     return $html_string;

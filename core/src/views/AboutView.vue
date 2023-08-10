@@ -4,6 +4,7 @@
       <div class="col col1">
           <h1 class="section-title">{{ page.headline1 }}</h1>
           <div v-html="page.textarea1"></div>
+          <router-link :to="{name: 'reports'}"><button class="btn">Discover the reports</button></router-link>
       </div>
       <div class="col col2">
           <img class="page-image" :src="page.image1" alt="Dagorà reports image" />
