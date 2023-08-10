@@ -324,7 +324,10 @@ nav.active {
 	border-radius:6px;
 	overflow:hidden;
   }
-
+  .home .tags {
+	  flex-wrap:wrap;
+	  line-height:40px;
+  }
 /*Reports page*/
 
 .reports .section1 {

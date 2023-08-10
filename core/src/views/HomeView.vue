@@ -3,11 +3,13 @@
     <section class="section1">
       <div class="col col1">
         <div class="tags">
-          <span>Luxury</span>
-          <span>Travel</span>
-          <span>Retail</span>
-          <span>Consumer</span>
-          <span>Home & living</span>
+          <router-link :to="{path:'/reports', query:{ 'topic': 'retail'}}"><span>Retail</span></router-link>
+          <router-link :to="{path:'/reports', query:{ 'topic': 'fashion'}}"><span>Fashion</span></router-link>
+          <router-link :to="{path:'/reports', query:{ 'topic': 'luxury'}}"><span>Luxury</span></router-link>
+          <router-link :to="{path:'/reports', query:{ 'topic': 'travel'}}"><span>Travel</span></router-link>
+          <router-link :to="{path:'/reports', query:{ 'topic': 'food'}}"> <span>Food</span></router-link>
+          <router-link :to="{path:'/reports', query:{ 'topic': 'design-furniture'}}"> <span>Design & furniture</span></router-link>
+          <router-link :to="{path:'/reports', query:{ 'topic': 'electronics'}}"> <span>Electronics</span></router-link>
         </div>
         <h1>{{ page.headline1 }}</h1>
         <div v-html="page.textarea1"></div>
