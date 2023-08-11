@@ -75,12 +75,11 @@ class OrderFormSubmission {
 
         // Do actual sending of report here
       	// Handle this as an entirely separate class, though...
-        
         if($this->payment_required === false) {
             $url = $this->create_downloads_url();
 
             require_once('MailerTool.php');
-            new MailerTool($this->contact['email_address'], $this->contact['first_name'], $this->contact['last_name'], 'full', $url);
+            new MailerTool($this->contact['email_address'], $this->contact['first_name'], $this->contact['last_name'], 'coupon', $url);
         	$this->handle_success();
         }
     }
@@ -200,7 +199,7 @@ class OrderFormSubmission {
                 UPDATE $table
                 SET session_id = %s
                 WHERE id = %d",
-            $this->$checkout_session_id, $this->registration_id ) );
+            $this->checkout_session_id, $this->registration_id ) );
         
 
     }

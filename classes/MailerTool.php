@@ -61,7 +61,8 @@ class MailerTool {
             	<div><img style="width:auto;height:60px;" src="https://dagora-reports.hidora.com/wp-content/uploads/LOGO-DAGORA_NEW-300x91-1.png"><br></div>
             	<div>
                 	<h2>Dear $this->recipient_fname </h2>
-                    <p>Thank you for purchasing on the Dagorà Reports eShop. <strong>Your payment was preocessed correctly</strong>.</p>
+                    <p>Thank you for purchasing on the Dagorà Reports eShop. <strong>Your payment was preocessed correctly</strong>
+					and shortly you will receive the tax documentation, always at the same email address provided.</p>
                     <div style="padding:20px;background:#efefef;">
                         <p><a href='$this->downloads_url' target='_blank'>Click here</a> to access your reports on our website.</p>
                     </div>
@@ -149,13 +150,13 @@ END;
             $config
         );
         $sendSmtpEmail = new \SendinBlue\Client\Model\SendSmtpEmail();
-        $sendSmtpEmail['subject'] = 'Welcome to our event';
+        $sendSmtpEmail['subject'] = 'Download your Dagorà reoprts';
         $sendSmtpEmail['htmlContent'] = $this->email_body;
-        $sendSmtpEmail['sender'] = array('name' => 'Dagorà', 'email' => 'events@dagora.ch');
+        $sendSmtpEmail['sender'] = array('name' => 'Dagorà', 'email' => 'info@dagora.ch');
         $sendSmtpEmail['to'] = array(
             array('email' => $this->recipient_email, 'name' => $this->recipient_fname . $this->recipient_lname)
         );
-        $sendSmtpEmail['replyTo'] = array('email' => 'events@dagora.ch', 'name' => 'Dagorà');
+        $sendSmtpEmail['replyTo'] = array('email' => 'info@dagora.ch', 'name' => 'Dagorà');
         
         try {
             $result = $apiInstance->sendTransacEmail($sendSmtpEmail);

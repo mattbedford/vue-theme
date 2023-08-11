@@ -17,11 +17,11 @@
       	<!--OG Graph Data-->
       	<meta property="og:title" content="Dagorà Reports Shop">
         <meta property="og:description" content="Dagorà brings you the latest data, trends and quantitative & qualitative reports across a range of lifestyle industries and verticals.">
-        <meta property="og:image" content="https://dagora-reports.hidora.com/wp-content/uploads/dagora-slide-0.jpg">
+        <meta property="og:image" content="https://reports.dagora.ch/wp-content/uploads/dagora-reports-eshop.jpg">
         <meta property="og:url" content="<?php echo get_permalink(); ?>">
         <meta property="og:site_name" content="Dagorà Reports Shop">
         <meta prefix="og: http://ogp.me/ns#" property="og:title" content="Dagorà Reports Shop" />
-        <meta prefix="og: http://ogp.me/ns#" property="og:image" content="https://dagora-reports.hidora.com/wp-content/uploads/dagora-slide-0.jpg">
+        <meta prefix="og: http://ogp.me/ns#" property="og:image" content="https://reports.dagora.ch/wp-content/uploads/dagora-reports-eshop.jpg">
         <meta prefix="og: http://ogp.me/ns#" property="og:url" content="<?php echo get_permalink(); ?>" />
         <meta name="author" content="Dagorà SA">
         <meta property="og:type" content="website" />

@@ -312,7 +312,7 @@ function send_report_summary($raw_data) {
 }
 
 
-function vaildate_stripe_session_id($raw_data) {
+function vaildate_stripe_session_id($raw_data) { // stripe-check route
 
     $data = $raw_data->get_json_params();
 
@@ -472,14 +472,14 @@ function stripe_confirmation_and_email_send($raw_data) {
     $table = $wpdb->prefix . 'orders';
     $order = $wpdb->get_row("SELECT * FROM $table WHERE session_id = '$stripe_session'");
 
-    if(!empty($order) && $order->email_address == $email) {
+    if(!empty($order) && $order->email == $email) {
 
         // Create download url
         $domain = site_url();
-        $url = $domain . '/thank-you?session=' . $stripe_session . '&id=' . $order->id;
+        $url = $domain . '/thank-you?session=' . $stripe_session . '&order=' . $order->id;
         
-        require_once('MailerTool.php');
-        new MailerTool($email, $order->first_name, $order->last_name, 'report', $url);
+        require_once(ABSPATH . 'wp-content/themes/dagora-reports-shop/classes/MailerTool.php');
+        new MailerTool($email, $order->name, $order->surname, 'report', $url);
        
     }
 }

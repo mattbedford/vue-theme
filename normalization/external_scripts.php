@@ -24,13 +24,13 @@ function get_vue() {
 		
 		case false:
 			$app_root = site_url() . "/wp-content/themes/dagora-reports-shop/dist/js/";
-			$app = "app.4048d41f.js";
+			$app = "app.7d9d54f3.js";
 			$chunks = "chunk-vendors.7d5be71f.js";
 			break;
 
 		default:
 			$app_root = site_url() . "/wp-content/themes/dagora-reports-shop/dist/js/";
-			$app = "app.4048d41f.js";
+			$app = "app.7d9d54f3.js";
 			$chunks = "chunk-vendors.7d5be71f.js";
 			break;
 	}

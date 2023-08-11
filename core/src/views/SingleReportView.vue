@@ -58,9 +58,13 @@ export default {
       };
       fetch(url, { method: 'GET', headers })
         .then((result) => result.json())
-        .then((result) => { this.report = result; })
+        .then((result) => { 
+          if(result[0] == 'error') this.$router.push('/404');
+          this.report = result; 
+        })
         .catch((error) => {
-            console.log(error)
+          console.log(error)
+          this.$router.push('/404')
             });
     },
     addToCart(reportId) {

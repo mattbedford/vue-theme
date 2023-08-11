@@ -7,6 +7,7 @@ import ThankYouView from '../views/ThankYouView.vue'
 import AboutView from '../views/AboutView.vue'
 import SuccessPreDownload from '../views/SuccessPreDownload.vue'
 import ReportsView from '../views/ReportsView.vue'
+import PathNotFound from '../views/PathNotFoundView.vue'
 
 
 Vue.use(VueRouter)
@@ -47,21 +48,21 @@ const routes = [
     name: 'reports',
     component: ReportsView
   },
+  {
+    path: '/:pathMatch(.*)*',
+    name: '404', 
+    component: PathNotFound 
+  },
 ]
 
 const router = new VueRouter({
   mode: 'history',
   scrollBehavior(to, from, savedPosition) {
-    if (to.hash) {
-      return {
-        el: to.hash,
-        behavior: 'smooth'
-      }
-    }
     if (savedPosition) {
       return savedPosition
+    } else {
+      return { top: 0 }
     }
-    return top;
     },
   base: process.env.BASE_URL,
   routes

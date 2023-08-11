@@ -69,17 +69,15 @@ export default {
         }
     },
     mounted() {
-        if(this.$route.query.order) {
-            this.ref = this.$route.query.order;
-            this.code = this.$route.query.coupon;
-            this.method = 'coupon';
-        }
         if(this.$route.query.session) {
             this.ref = this.$route.query.order;
             this.session = this.$route.query.session;
             this.method = 'stripe';
-        }
-        if(this.$route.query.preview) { /*requires a url query string with email and teaser_id*/
+        } else if(this.$route.query.order) {
+            this.ref = this.$route.query.order;
+            this.code = this.$route.query.coupon;
+            this.method = 'coupon';
+        } else if(this.$route.query.preview) { /*requires a url query string with email and teaser_id*/
             this.ref = this.$route.query.preview;
             this.session = this.$route.query.email;
             this.method = 'teaser';
