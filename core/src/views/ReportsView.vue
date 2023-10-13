@@ -27,7 +27,7 @@
               </router-link>
               <div class="report-content">
                 <h3>{{ report.title }}</h3>
-                <p>{{ report.short_desc }}</p>
+                <p v-html="report.short_desc"></p>
                 <div class="btns">
                   <router-link :to="{name: 'report' , params:{ slug: report.slug }}" class="btn">Learn more</router-link>
                   <button v-if="$root.inCart.includes(report.id)" class="btn bad" @click="removeFromCart(report.id)">Remove from cart</button>
