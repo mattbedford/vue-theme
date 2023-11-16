@@ -3,6 +3,9 @@
         <form class="purchase-form">
             <h3>{{ headline }}</h3>
             <div v-html="textarea" class="intro"></div>
+            <a href="mailto:lifestyle@dagora.ch?subject=Can I please get my community coupon" class="dagmail">
+                Dagorà member? Request your coupon here for free download
+            </a>
             <input type="hidden" name="required" v-model="honeypot">
 
             <div class="form-section form-section-1" :class="{'active': currForm === 0}">

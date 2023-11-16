@@ -16,13 +16,16 @@
                 <h4 v-if="report.release_date && report.release_date !== ''" v-html="`Released: ${report.release_date}`"></h4>
                 <h4 class="single-report-price" v-html="calcCHF(report.price)"></h4>
                 <div class="description" v-html="report.long_desc"></div>
-                <div class="btns">
+                <div class="btns" style="display:flex;">
                     <button v-if="$root.inCart.includes(report.id)" class="btn bad" @click="removeFromCart(report.id)">Remove from cart</button>
                     <button v-else class="btn" @click="addToCart(report.id)">Add to cart</button>
                     <button class="btn" v-if="report.teaser_file" @click="showForm = !showForm">
                       <span v-if="!showForm">Download preview</span>
                       <span v-else>&#x2715;</span>
                     </button>
+                    <a href="https://share.hsforms.com/1yo5Ig5LhSoSyq3qUkX7bVw4m7jf" target="_blank">
+                      <button class="btn green">Join Dagorà - Free download</button>
+                    </a>
                 </div>
             </div>
         </section>
